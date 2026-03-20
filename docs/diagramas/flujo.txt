@@ -1,0 +1,16 @@
+==== CSVs ====
+CSV de clientes (se sube una vez o pocas veces)
+cliente_id, nombre, apellidos, email, fecha_nacimiento, fecha_alta
+
+CSV de visitas (se sube periódicamente, ej. cada mes)
+cliente_id, fecha_visita, duracion_minutos
+
+==== FLUJO BACKEND ====
+1. Crear ImportacionCsv (estado = PROCESANDO)
+2. Parsear filas del CSV de visitas
+3. Por cada fila → buscar cliente_id en tabla CLIENTE
+     - Si existe  → crear VISITA vinculada
+     - Si no existe → marcar como error, continuar
+4. Calcular métricas por cliente
+5. Guardar MetricaCliente
+6. Actualizar ImportacionCsv (estado = COMPLETADA)
