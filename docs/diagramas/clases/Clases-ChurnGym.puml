@@ -84,7 +84,6 @@ package "Entity" #FFE5B4 {
     ERROR
   }
 
-.
   Usuario -[hidden]down-> ImportacionCsv
   Usuario -[hidden]right-> Cliente
   Cliente -[hidden]down-> Visita
