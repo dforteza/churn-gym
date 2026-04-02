@@ -1,0 +1,62 @@
+{
+  "id": 1,
+  "nombreDescriptivo": "Marzo 2026",
+  "fechaImportacion": "2026-03-21T10:30:00",
+  "totalClientes": 45,
+  "alto": 8,
+  "medio": 15,
+  "bajo": 22,
+  "estado": "COMPLETADA",
+  "metricas": [
+    {
+      "clienteId": 101,
+      "nombre": "Juan",
+      "apellidos": "García López",
+      "email": "juan.garcia@email.com",
+      "frecuenciaSemanal": 0.5,
+      "semanasInactivo": 5,
+      "tendenciaMensual": -72.0,
+      "nivelRiesgo": "ALTO"
+    },
+    {
+      "clienteId": 102,
+      "nombre": "María",
+      "apellidos": "Fernández Ruiz",
+      "email": "maria.fernandez@email.com",
+      "frecuenciaSemanal": 1.8,
+      "semanasInactivo": 2,
+      "tendenciaMensual": -30.5,
+      "nivelRiesgo": "MEDIO"
+    },
+    {
+      "clienteId": 103,
+      "nombre": "Carlos",
+      "apellidos": "Martínez Sanz",
+      "email": "carlos.martinez@email.com",
+      "frecuenciaSemanal": 3.2,
+      "semanasInactivo": 0,
+      "tendenciaMensual": 10.0,
+      "nivelRiesgo": "BAJO"
+    },
+    {
+      "clienteId": 104,
+      "nombre": "Laura",
+      "apellidos": "Sánchez Gil",
+      "email": "laura.sanchez@email.com",
+      "frecuenciaSemanal": 0.8,
+      "semanasInactivo": 4,
+      "tendenciaMensual": -55.0,
+      "nivelRiesgo": "ALTO"
+    },
+    {
+      "clienteId": 105,
+      "nombre": "Pedro",
+      "apellidos": "Jiménez Mora",
+      "email": "pedro.jimenez@email.com",
+      "frecuenciaSemanal": 2.5,
+      "semanasInactivo": 1,
+      "tendenciaMensual": -15.0,
+      "nivelRiesgo": "BAJO"
+    }
+  ]
+}

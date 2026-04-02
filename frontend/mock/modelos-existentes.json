@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "nombreDescriptivo": "Marzo 2026",
+    "fechaImportacion": "2026-03-21T10:30:00",
+    "totalClientes": 45,
+    "alto": 8,
+    "medio": 15,
+    "bajo": 22,
+    "estado": "COMPLETADA"
+  },
+  {
+    "id": 2,
+    "nombreDescriptivo": "Febrero 2026",
+    "fechaImportacion": "2026-02-18T09:15:00",
+    "totalClientes": 42,
+    "alto": 5,
+    "medio": 18,
+    "bajo": 19,
+    "estado": "COMPLETADA"
+  },
+  {
+    "id": 3,
+    "nombreDescriptivo": "Enero 2026",
+    "fechaImportacion": "2026-01-20T11:00:00",
+    "totalClientes": 40,
+    "alto": 3,
+    "medio": 12,
+    "bajo": 25,
+    "estado": "COMPLETADA"
+  }
+]

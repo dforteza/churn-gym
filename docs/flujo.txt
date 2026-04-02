@@ -14,3 +14,17 @@ cliente_id, fecha_visita, duracion_minutos
 4. Calcular métricas por cliente
 5. Guardar MetricaCliente
 6. Actualizar ImportacionCsv (estado = COMPLETADA)
+
+==== FLUJO COMPLETO ====
+LOGIN
+  └── DASHBOARD (2 botones)
+        ├── IMPORTAR MODELO (nuevo)
+        │     Formulario:
+        │     - Nombre del modelo       (texto)
+        │     - CSV de clientes         (fichero)
+        │     - CSV de visitas          (fichero)
+        │           └── RESULTADO: lista clientes + nivel de riesgo
+        │
+        └── CARGAR MODELO (existente)
+              Listado de modelos de ese usuario
+                    └── DETALLE MODELOn lista clientes + nivel de riesgo
