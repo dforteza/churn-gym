@@ -3,7 +3,7 @@ Organizacion:
 
 Obligatorios:
 - Diagrama Entidad-Relación (ERD) []
-- Diagrama de arquitectura        []
+- Diagrama de componentes         []
 - Diagrama de clase               []
 - Diagrama de casos de uso        []
 
