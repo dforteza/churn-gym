@@ -19,75 +19,80 @@ skinparam class {
 ' ══════════════════════════════════════════════════
 ' CAPA ENTITY
 ' ══════════════════════════════════════════════════
-package "Entity" #FFE5B4 {
+package "Entity" #FFE5B4 
+{
+class Usuario
+{
+  - id: Long
+  - username: String
+  - password: String
+  - email: String
+  - rol: Rol
+}
 
-  class Usuario {
-    - id: Long
-    - username: String
-    - email: String
-    - passwordHash: String
-    - rol: Rol
-    - activo: Boolean
-    - creadoEn: LocalDateTime
-  }
+class Importacion 
+{
+  - id: Long
+  - usuarioId: Long
+  - nombreDescriptivo: String
+  - fechaImportacion: LocalDateTime
+  - totalRegistros: Integer
+  - registrosOk: Integer
+  - registrosError: Integer
+  - estado: EstadoImportacion
+}
 
-  class Cliente {
-    - id: Long
-    - nombre: String
-    - apellidos: String
-    - email: String
-    - fechaNacimiento: LocalDate
-    - fechaAlta: LocalDate
-    - activo: Boolean
-  }
+class Cliente
+{
+  - id: Long
+  - nombre: String
+  - apellidos: String
+  - email: String
+  - fechaNacimiento: LocalDate
+  - fechaAlta: LocalDate
+}
 
-  class ImportacionCsv {
-    - id: Long
-    - nombreDescriptivo: String
-    - nombreFichero: String
-    - fechaImportacion: LocalDateTime
-    - totalRegistros: Integer
-    - registrosOk: Integer
-    - registrosError: Integer
-    - estado: EstadoImportacion
-  }
+class Visita
+{
+  - id: Long
+  - fechaVisita: LocalDate
+  - duracionMinutos: Integer
+  - clienteId: Long
+  - importacionId: Long
+}
 
-  class Visita {
-    - id: Long
-    - fechaVisita: LocalDate
-    - duracionMinutos: Integer
-  }
+class MetricaCliente 
+{
+  - id: Long
+  - clienteId: Long
+  - importacionId: Long
+  - frecuenciaSemanal: Double
+  - semanasInactivo: Integer
+  - tendenciaMensual: Double
+  - nivelRiesgo: NivelRiesgo
+}
 
-  class MetricaCliente {
-    - id: Long
-    - frecuenciaSemanal: Double
-    - semanasInactivo: Integer
-    - tendenciaMensual: Double
-    - nivelRiesgo: NivelRiesgo
-    - calculadaEn: LocalDateTime
-  }
+enum Rol {
+ADMIN
+USUARIO
+}
 
-  enum Rol {
-    ADMIN
-    USUARIO
-  }
+enum NivelRiesgo {
+BAJO
+MEDIO
+ALTO
+}
 
-  enum NivelRiesgo {
-    BAJO
-    MEDIO
-    ALTO
-  }
+enum EstadoImportacion {
+PROCESANDO
+COMPLETADA
+ERROR
+}
 
-  enum EstadoImportacion {
-    PROCESANDO
-    COMPLETADA
-    ERROR
-  }
-
-  Usuario -[hidden]down-> ImportacionCsv
+  Usuario -[hidden]down-> Importacion
   Usuario -[hidden]right-> Cliente
   Cliente -[hidden]down-> Visita
-  ImportacionCsv -[hidden]right-> Visita
+  Importacion -[hidden]right-> Visita
   Visita -[hidden]right-> MetricaCliente
   Rol -[hidden]down-> EstadoImportacion
   EstadoImportacion -[hidden]down-> NivelRiesgo
@@ -156,8 +161,8 @@ package "Repository" #D5F5E3 {
     + findByEmail(email: String): Optional<Cliente>
   }
 
-  interface ImportacionCsvRepository {
-    + findByUsuarioIdOrderByFechaImportacionDesc(usuarioId: Long): List<ImportacionCsv>
+  interface ImportacionRepository {
+    + findByUsuarioIdOrderByFechaImportacionDesc(usuarioId: Long): List<Importacion>
   }
 
   interface VisitaRepository {
@@ -216,14 +221,14 @@ package "Controller" #FDEBD0 {
 ' ══════════════════════════════════════════════════
 ' RELACIONES ENTRE ENTIDADES
 ' ══════════════════════════════════════════════════
-Usuario "1" o-- "0..*" ImportacionCsv : realiza
-ImportacionCsv "1" *-- "1..*" Visita : contiene
-ImportacionCsv "1" *-- "1..*" MetricaCliente : genera
+Usuario "1" o-- "0..*" Importacion : realiza
+Importacion "1" *-- "1..*" Visita : contiene
+Importacion "1" *-- "1..*" MetricaCliente : genera
 Cliente "1" o-- "0..*" Visita : registra
 Cliente "1" o-- "0..*" MetricaCliente : acumula
 
 Usuario -right-> Rol
-ImportacionCsv -right-> EstadoImportacion
+Importacion -right-> EstadoImportacion
 MetricaCliente -right-> NivelRiesgo
 
 ' ══════════════════════════════════════════════════
@@ -233,7 +238,7 @@ AuthController ..> AuthService : usa
 ModeloController ..> ModeloService : usa
 
 AuthService ..> UsuarioRepository : usa
-ModeloService ..> ImportacionCsvRepository : usa
+ModeloService ..> ImportacionRepository : usa
 ModeloService ..> ClienteRepository : usa
 ModeloService ..> CsvParserService : usa
 ModeloService ..> ChurnEngineService : usa
@@ -243,8 +248,8 @@ CsvParserService ..> VisitaRepository : usa
 ' ══════════════════════════════════════════════════
 ' MAPEOS DTO
 ' ══════════════════════════════════════════════════
-ImportacionCsv ..> ModeloResumenDTO : «maps to»
-ImportacionCsv ..> ModeloDetalleDTO : «maps to»
+Importacion ..> ModeloResumenDTO : «maps to»
+Importacion ..> ModeloDetalleDTO : «maps to»
 MetricaCliente ..> MetricaClienteDTO : «maps to»
 
 @enduml
