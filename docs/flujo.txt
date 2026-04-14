@@ -28,3 +28,11 @@ LOGIN
         └── CARGAR MODELO (existente)
               Listado de modelos de ese usuario
                     └── DETALLE MODELOn lista clientes + nivel de riesgo
+==== EXCEPCIONES ====
+exception/
+  ├── ResourceNotFoundException.java   → 404
+  ├── AccessDeniedException.java       → 403
+  ├── CsvParsingException.java         → 400
+  ├── InvalidFileException.java        → 400
+  ├── ErrorResponse.java               → DTO de respuesta de error
+  └── GlobalExceptionHandler.java      → captura todo con @RestControllerAdvice

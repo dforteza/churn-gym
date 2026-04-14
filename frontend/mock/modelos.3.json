@@ -1,0 +1,42 @@
+{
+  "id": 3,
+  "nombreDescriptivo": "Enero 2026",
+  "fechaImportacion": "2026-01-20T11:00:00",
+  "totalClientes": 3,
+  "alto": 0,
+  "medio": 1,
+  "bajo": 2,
+  "estado": "COMPLETADA",
+  "metricas": [
+    {
+      "clienteId": 101,
+      "nombre": "Juan",
+      "apellidos": "García López",
+      "email": "juan.garcia@email.com",
+      "frecuenciaSemanal": 2.8,
+      "semanasInactivo": 0,
+      "tendenciaMensual": 8.0,
+      "nivelRiesgo": "BAJO"
+    },
+    {
+      "clienteId": 103,
+      "nombre": "Carlos",
+      "apellidos": "Martínez Sanz",
+      "email": "carlos.martinez@email.com",
+      "frecuenciaSemanal": 1.5,
+      "semanasInactivo": 1,
+      "tendenciaMensual": -25.0,
+      "nivelRiesgo": "MEDIO"
+    },
+    {
+      "clienteId": 106,
+      "nombre": "Ana",
+      "apellidos": "López Vega",
+      "email": "ana.lopez@email.com",
+      "frecuenciaSemanal": 3.5,
+      "semanasInactivo": 0,
+      "tendenciaMensual": 15.0,
+      "nivelRiesgo": "BAJO"
+    }
+  ]
+}
