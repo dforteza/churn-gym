@@ -2,10 +2,10 @@
   "id": 1,
   "nombreDescriptivo": "Marzo 2026",
   "fechaImportacion": "2026-03-21T10:30:00",
-  "totalClientes": 45,
-  "alto": 8,
-  "medio": 15,
-  "bajo": 22,
+  "totalClientes": 5,
+  "alto": 2,
+  "medio": 2,
+  "bajo": 1,
   "estado": "COMPLETADA",
   "metricas": [
     {
@@ -43,9 +43,9 @@
       "nombre": "Laura",
       "apellidos": "Sánchez Gil",
       "email": "laura.sanchez@email.com",
-      "frecuenciaSemanal": 0.8,
-      "semanasInactivo": 4,
-      "tendenciaMensual": -55.0,
+      "frecuenciaSemanal": 0.3,
+      "semanasInactivo": 6,
+      "tendenciaMensual": -85.0,
       "nivelRiesgo": "ALTO"
     },
     {
@@ -53,10 +53,10 @@
       "nombre": "Pedro",
       "apellidos": "Jiménez Mora",
       "email": "pedro.jimenez@email.com",
-      "frecuenciaSemanal": 2.5,
+      "frecuenciaSemanal": 2.1,
       "semanasInactivo": 1,
-      "tendenciaMensual": -15.0,
-      "nivelRiesgo": "BAJO"
+      "tendenciaMensual": -18.0,
+      "nivelRiesgo": "MEDIO"
     }
   ]
 }
