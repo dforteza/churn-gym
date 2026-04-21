@@ -1,9 +1,10 @@
 package com.juandelacierva.ChurnGym.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
-public class MetricaClienteResponseDto 
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+public class ClienteAnalisisResponse 
 {
     private Long    clienteId;
     private String  nombre;
@@ -12,5 +13,10 @@ public class MetricaClienteResponseDto
     private Double  frecuenciaSemanal;
     private Integer semanasInactivo;
     private Double  tendenciaMensual;
+    private String  franjaHoraria;
+    private String  deportePrincipal;
+    private Integer mesesComoSocio;
     private String  nivelRiesgo;
+    private Double  probabilidadAbandono;
+    private String  grupo;
 }
