@@ -1,15 +1,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// config.js
+// config.js — v2.0
 // ─────────────────────────────────────────────────────────────────────────────
-// ÚNICO fichero que hay que tocar al pasar de mock a backend real.
-// MOCK_MODE = true hasta despliegue
+// Cambiar MOCK_MODE = false cuando Diego avise que el backend está listo.
 //
-// Endpoints disponibles:
-//   POST   /auth/login
-//   GET    /modelos
-//   GET    /modelos/{id}
-//   POST   /modelos          (multipart/form-data)
-//   DELETE /modelos/{id}     (devuelve 204, sin body)
+// Endpoints:
+//   POST  /api/auth/login
+//   GET   /api/analisis?nivelRiesgo=ALTO&grupo=...
+//   POST  /api/analisis/lanzar
+//   GET   /api/analisis/cliente/{id}
 // ─────────────────────────────────────────────────────────────────────────────
 
 const MOCK_MODE = true;
@@ -17,16 +15,14 @@ const MOCK_MODE = true;
 const API_BASE  = 'http://localhost:8080/api';
 const MOCK_BASE = './mock';
 
-// ─── MAPA DE ENDPOINTS ────────────────────────────────────────────────────────
 const ENDPOINTS = {
-  login:        ()   => MOCK_MODE ? `${MOCK_BASE}/auth.login.json`      : `${API_BASE}/auth/login`,
-  modelos:      ()   => MOCK_MODE ? `${MOCK_BASE}/modelos.json`          : `${API_BASE}/modelos`,
-  modeloById:   (id) => MOCK_MODE ? `${MOCK_BASE}/modelos.${id}.json`    : `${API_BASE}/modelos/${id}`,
-  modeloNuevo:  ()   => MOCK_MODE ? `${MOCK_BASE}/modelos.nuevo.json`    : `${API_BASE}/modelos`,
-  modeloDelete: (id) => MOCK_MODE ? null : `${API_BASE}/modelos/${id}`,
+  login:           ()   => MOCK_MODE ? `${MOCK_BASE}/auth.login.json`            : `${API_BASE}/auth/login`,
+  analisis:        ()   => MOCK_MODE ? `${MOCK_BASE}/analisis.json`               : `${API_BASE}/analisis`,
+  analisisLanzar:  ()   => MOCK_MODE ? `${MOCK_BASE}/analisis.lanzar.json`        : `${API_BASE}/analisis/lanzar`,
+  analisisCliente: (id) => MOCK_MODE ? `${MOCK_BASE}/analisis.cliente.${id}.json` : `${API_BASE}/analisis/cliente/${id}`,
 };
 
-// ─── LOGIN ────────────────────────────────────────────────────────────────────
+// LOGIN
 async function apiLogin(username, password) {
   if (MOCK_MODE) {
     const res = await fetch(ENDPOINTS.login());
@@ -41,59 +37,50 @@ async function apiLogin(username, password) {
   return res.json();
 }
 
-// ─── GET MODELOS ──────────────────────────────────────────────────────────────
-async function apiGetModelos() {
+// GET ANÁLISIS VIGENTE
+// nivelRiesgo: 'ALTO' | 'MEDIO' | 'BAJO' | null
+// grupo:       'Socio consolidado en riesgo' | 'Socio nuevo que no engancha' |
+//              'Socio activo estable' | 'Socio irregular' | null
+async function apiGetAnalisis(nivelRiesgo = null, grupo = null) {
   if (MOCK_MODE) {
-    const res = await fetch(ENDPOINTS.modelos());
+    const res  = await fetch(ENDPOINTS.analisis());
+    const data = await res.json();
+    let resultados = data.resultados;
+    if (nivelRiesgo) resultados = resultados.filter(r => r.nivelRiesgo === nivelRiesgo);
+    if (grupo)       resultados = resultados.filter(r => r.grupo === grupo);
+    const alto  = resultados.filter(r => r.nivelRiesgo === 'ALTO').length;
+    const medio = resultados.filter(r => r.nivelRiesgo === 'MEDIO').length;
+    const bajo  = resultados.filter(r => r.nivelRiesgo === 'BAJO').length;
+    return { ...data, resultados, totalClientes: resultados.length, alto, medio, bajo };
+  }
+  const params = new URLSearchParams();
+  if (nivelRiesgo) params.append('nivelRiesgo', nivelRiesgo);
+  if (grupo)       params.append('grupo', grupo);
+  const query = params.toString() ? `?${params.toString()}` : '';
+  return apiFetch(`${ENDPOINTS.analisis()}${query}`);
+}
+
+// POST LANZAR ANÁLISIS
+async function apiLanzarAnalisis() {
+  if (MOCK_MODE) {
+    await new Promise(r => setTimeout(r, 1200));
+    const res = await fetch(ENDPOINTS.analisisLanzar());
     return res.json();
   }
-  return apiFetch(ENDPOINTS.modelos());
+  return apiFetch(ENDPOINTS.analisisLanzar(), { method: 'POST' });
 }
 
-// ─── GET MODELO BY ID ─────────────────────────────────────────────────────────
-async function apiGetModeloById(id) {
+// GET DETALLE CLIENTE
+async function apiGetDetalleCliente(id) {
   if (MOCK_MODE) {
-    const res = await fetch(ENDPOINTS.modeloById(id));
-    if (!res.ok) throw new Error('Modelo no encontrado');
+    const res = await fetch(ENDPOINTS.analisisCliente(id));
+    if (!res.ok) throw new Error('Cliente no encontrado');
     return res.json();
   }
-  return apiFetch(ENDPOINTS.modeloById(id));
+  return apiFetch(ENDPOINTS.analisisCliente(id));
 }
 
-// ─── POST IMPORTAR MODELO ────────────────────────────────────────────────────
-async function apiImportarModelo(nombre, csvClientes, csvVisitas) {
-  if (MOCK_MODE) {
-    await new Promise(r => setTimeout(r, 800)); // simula tiempo de proceso
-    const res = await fetch(ENDPOINTS.modeloNuevo());
-    return res.json();
-  }
-  const token = localStorage.getItem('jwt_token');
-  const formData = new FormData();
-  formData.append('nombre', nombre);
-  formData.append('csvClientes', csvClientes);
-  formData.append('csvVisitas', csvVisitas);
-  const res = await fetch(ENDPOINTS.modeloNuevo(), {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `Error ${res.status}`);
-  }
-  return res.json();
-}
-
-// ─── DELETE MODELO ────────────────────────────────────────────────────────────
-async function apiDeleteModelo(id) {
-  if (MOCK_MODE) {
-    await new Promise(r => setTimeout(r, 300)); // simula latencia
-    return null; // 204 sin body
-  }
-  return apiFetch(ENDPOINTS.modeloDelete(id), { method: 'DELETE' });
-}
-
-// ─── HELPER GENÉRICO CON JWT ──────────────────────────────────────────────────
+// HELPER GENÉRICO CON JWT
 async function apiFetch(url, options = {}) {
   const token = localStorage.getItem('jwt_token');
   const headers = {
@@ -107,7 +94,6 @@ async function apiFetch(url, options = {}) {
     window.location.href = '/index.html';
     return;
   }
-  if (res.status === 204) return null;
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || `Error ${res.status}`);
@@ -115,4 +101,4 @@ async function apiFetch(url, options = {}) {
   return res.json();
 }
 
-export { apiLogin, apiGetModelos, apiGetModeloById, apiImportarModelo, apiDeleteModelo };
+export { apiLogin, apiGetAnalisis, apiLanzarAnalisis, apiGetDetalleCliente };
