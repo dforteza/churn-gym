@@ -1,9 +1,11 @@
 package com.juandelacierva.ChurnGym.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
-public class LoginResponseDto 
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder
+public class LoginResponse 
 {
     private String token;
     private String username;
