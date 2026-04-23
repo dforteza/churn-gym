@@ -15,7 +15,7 @@ const MOCK_BASE = new URL('../mock/', import.meta.url);
 const ENDPOINTS = {
   login: () => MOCK_MODE ? new URL('auth.login.json', MOCK_BASE).href : `${API_BASE}/auth/login`,
   modelos: () => MOCK_MODE ? new URL('modelos-existentes.json', MOCK_BASE).href : `${API_BASE}/modelos`,
-  modeloById: (id) => MOCK_MODE ? new URL(`modelos-existentes.${id}.json`, MOCK_BASE).href : `${API_BASE}/modelos/${id}`,
+  modeloById: (id) => MOCK_MODE ? new URL('metricas.json', MOCK_BASE).href : `${API_BASE}/modelos/${id}`,
 };
 
 // ─── HELPER fetch con JWT ─────────────────────────────────────────────────────

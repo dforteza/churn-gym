@@ -1,0 +1,11 @@
+frontend/
+├── mock/
+│   ├── auth.login.json      ← respuesta del POST login
+│   ├── modelos.json         ← respuesta del GET /modelos (listado) -> GET ALL
+│   ├── modelos.1.json       ← respuesta del GET /modelos/1 (detalle) -> GET BY ID = 1
+│   ├── modelos.2.json       ← respuesta del GET /modelos/2 (detalle) -> GET BY ID = 1
+│   ├── modelos.3.json       ← respuesta del GET /modelos/3 (detalle) -> GET BY ID = 1
+│   ├── modelos.nuevo.json   ← respuesta del POST /modelos (tras importar) -> crearModelo
+│   └── errors.json          ← referencia de errores 400/401/403/404 -> Gestion de errores
+└── js/
+    └── config.js            ← todas las funciones listas para usar
