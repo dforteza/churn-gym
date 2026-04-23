@@ -1,11 +1,11 @@
 Organizacion:
-- Diagrama de Gantt               []
+- Diagrama de Gantt               [X]
 
 Obligatorios:
-- Diagrama Entidad-Relación (ERD) []
-- Diagrama de componentes         []
-- Diagrama de clase               []
-- Diagrama de casos de uso        []
+- Diagrama Entidad-Relación (ERD) [X]
+- Diagrama de componentes         [X]
+- Diagrama de clase               [X]
+- Diagrama de casos de uso        [X]
 
 Opcionales:
 - Diagrama de Secuencia

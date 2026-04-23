@@ -1,23 +1,22 @@
-openapi: 3.0.3
+penapi: 3.0.3
 
 info:
   title: Churn Gym Detector API
   description: >
-    API REST para el sistema de detección temprana de churn en clientes de gimnasios.
-    Permite importar modelos (clientes + visitas), calcular métricas de actividad
-    y consultar niveles de riesgo de abandono por cliente.
-  version: 1.0.0
+    API REST para la detección temprana de abandono (churn) en clientes de gimnasios.
+    El motor analiza datos de actividad precargados, asigna niveles de riesgo
+    y agrupa a los clientes según su perfil de comportamiento.
+  version: 2.0.0
   contact:
     name: Diego Forteza & Javier Escudero
     email: dfortezabenito@gmail.com
 
 servers:
   - url: http://localhost:8080/api
-    description: Desarrollo local (backend)
+    description: Desarrollo local
   - url: https://churn-gym-backend.onrender.com/api
     description: Producción (Render)
 
-# ─── SEGURIDAD GLOBAL ──────────────────────────────────────────────────────────
 security:
   - bearerAuth: []
 
@@ -28,10 +27,9 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
-  # ─── SCHEMAS ────────────────────────────────────────────────────────────────
   schemas:
 
-    # AUTH
+    # ── AUTH ──────────────────────────────────────────────────────────────────
     LoginRequest:
       type: object
       required: [username, password]
@@ -57,128 +55,112 @@ components:
           enum: [ADMIN, USUARIO]
           example: ADMIN
 
-    # MODELO (ImportacionCsv con resumen de métricas)
-    ModeloResumen:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        nombreDescriptivo:
-          type: string
-          example: Marzo 2026
-        fechaImportacion:
-          type: string
-          format: date-time
-          example: 2026-03-21T10:30:00
-        totalClientes:
-          type: integer
-          example: 45
-        alto:
-          type: integer
-          example: 8
-        medio:
-          type: integer
-          example: 15
-        bajo:
-          type: integer
-          example: 22
-        estado:
-          type: string
-          enum: [PROCESANDO, COMPLETADA, ERROR]
-          example: COMPLETADA
-
-    ModeloDetalle:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        nombreDescriptivo:
-          type: string
-          example: Marzo 2026
-        fechaImportacion:
-          type: string
-          format: date-time
-          example: 2026-03-21T10:30:00
-        totalClientes:
-          type: integer
-          example: 45
-        alto:
-          type: integer
-          example: 8
-        medio:
-          type: integer
-          example: 15
-        bajo:
-          type: integer
-          example: 22
-        estado:
-          type: string
-          enum: [PROCESANDO, COMPLETADA, ERROR]
-          example: COMPLETADA
-        metricas:
-          type: array
-          items:
-            $ref: '#/components/schemas/MetricaCliente'
-
-    # MÉTRICA por cliente dentro de un modelo
-    MetricaCliente:
+    # ── RESULTADO POR CLIENTE ─────────────────────────────────────────────────
+    ClienteAnalisisResponse:
       type: object
       properties:
         clienteId:
           type: integer
-          example: 101
+          example: 1
         nombre:
           type: string
-          example: Juan
+          description: Nombre del cliente (de cliente_privado)
+          example: Carlos
         apellidos:
           type: string
-          example: García López
+          description: Apellidos del cliente (de cliente_privado)
+          example: García Martínez
         email:
           type: string
-          example: juan.garcia@email.com
+          description: Email del cliente — para futuras notificaciones
+          example: carlos.garcia@email.com
         frecuenciaSemanal:
           type: number
           format: double
-          description: Visitas medias por semana en los últimos 30 días
-          example: 2.3
+          description: Visitas medias por semana
+          example: 0.5
         semanasInactivo:
           type: integer
-          description: Semanas consecutivas sin ninguna visita
-          example: 3
+          description: Semanas consecutivas sin actividad
+          example: 5
         tendenciaMensual:
           type: number
           format: double
-          description: Variación porcentual de visitas (primera vs segunda quincena)
-          example: -45.2
+          description: Variación porcentual de actividad en el último mes
+          example: -72.0
+        franjaHoraria:
+          type: string
+          enum: [MANANA, TARDE, NOCHE]
+          example: MANANA
+        deportePrincipal:
+          type: string
+          enum: [MUSCULACION, CARDIO, CROSSFIT, CLASES_COLECTIVAS, MIXTO]
+          example: CARDIO
+        mesesComoSocio:
+          type: integer
+          description: Antigüedad del socio en meses
+          example: 24
         nivelRiesgo:
           type: string
           enum: [BAJO, MEDIO, ALTO]
           example: ALTO
+        probabilidadAbandono:
+          type: number
+          format: double
+          description: Probabilidad de abandono en porcentaje (0-100)
+          example: 91.5
+        grupo:
+          type: string
+          description: Segmento al que pertenece el cliente
+          enum:
+            - Socio consolidado en riesgo
+            - Socio nuevo que no engancha
+            - Socio activo estable
+            - Socio irregular
+          example: Socio consolidado en riesgo
 
-    # ERRORES
+    # ── RESUMEN DEL ANÁLISIS ──────────────────────────────────────────────────
+    AnalisisResumenResponse:
+      type: object
+      properties:
+        calculadoEn:
+          type: string
+          format: date-time
+          example: 2026-04-18T11:45:00
+        totalClientes:
+          type: integer
+          example: 50
+        alto:
+          type: integer
+          example: 12
+        medio:
+          type: integer
+          example: 20
+        bajo:
+          type: integer
+          example: 18
+        resultados:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClienteAnalisisResponse'
+
+    # ── ERRORES ───────────────────────────────────────────────────────────────
     ErrorResponse:
       type: object
       properties:
         timestamp:
           type: string
           format: date-time
-          example: 2026-03-21T10:30:00
         status:
           type: integer
-          example: 400
         error:
           type: string
-          example: Bad Request
         message:
           type: string
-          example: El fichero CSV de clientes es obligatorio
 
-# ─── ENDPOINTS ─────────────────────────────────────────────────────────────────
+# ── ENDPOINTS ─────────────────────────────────────────────────────────────────
 paths:
 
-  # AUTH ────────────────────────────────────────────────────────────────────────
   /auth/login:
     post:
       tags: [Auth]
@@ -205,71 +187,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  # MODELOS ─────────────────────────────────────────────────────────────────────
-  /modelos:
+  /analisis:
     get:
-      tags: [Modelos]
-      summary: Listar modelos del usuario autenticado
-      description: Devuelve todos los modelos importados por el usuario ordenados por fecha descendente.
-      responses:
-        '200':
-          description: Lista de modelos
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ModeloResumen'
-        '401':
-          description: Token inválido o ausente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-    post:
-      tags: [Modelos]
-      summary: Importar nuevo modelo
+      tags: [Analisis]
+      summary: Obtener análisis vigente
       description: >
-        Recibe el nombre del modelo y dos ficheros CSV (clientes y visitas).
-        Procesa los datos, calcula las métricas y devuelve el modelo completo con nivel de riesgo por cliente.
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required: [nombre, csvClientes, csvVisitas]
-              properties:
-                nombre:
-                  type: string
-                  description: Nombre descriptivo del modelo
-                  example: Marzo 2026
-                csvClientes:
-                  type: string
-                  format: binary
-                  description: >
-                    CSV con columnas: cliente_id, nombre, apellidos, email,
-                    fecha_nacimiento (YYYY-MM-DD), fecha_alta (YYYY-MM-DD)
-                csvVisitas:
-                  type: string
-                  format: binary
-                  description: >
-                    CSV con columnas: cliente_id, fecha_visita (YYYY-MM-DD),
-                    duracion_minutos
+        Devuelve el último análisis calculado con todos los clientes y sus métricas.
+        Soporta filtrado opcional por nivel de riesgo y por grupo,
+        y siempre ordena por probabilidad de abandono descendente.
+      parameters:
+        - name: nivelRiesgo
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [ALTO, MEDIO, BAJO]
+          description: Filtrar por nivel de riesgo
+          example: ALTO
+        - name: grupo
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - Socio consolidado en riesgo
+              - Socio nuevo que no engancha
+              - Socio activo estable
+              - Socio irregular
+          description: Filtrar por grupo de segmentación
       responses:
-        '201':
-          description: Modelo creado y analizado correctamente
+        '200':
+          description: Análisis vigente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ModeloDetalle'
-        '400':
-          description: CSV inválido o campos obligatorios ausentes
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/AnalisisResumenResponse'
         '401':
           description: Token inválido o ausente
           content:
@@ -277,11 +229,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /modelos/{id}:
+  /analisis/lanzar:
+    post:
+      tags: [Analisis]
+      summary: Lanzar nuevo análisis
+      description: >
+        Lee los datos actuales de cliente_datos, recalcula métricas y niveles de riesgo
+        para todos los clientes, sobreescribe resultado_analisis y devuelve el nuevo resultado.
+      responses:
+        '200':
+          description: Nuevo análisis calculado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalisisResumenResponse'
+        '401':
+          description: Token inválido o ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /analisis/cliente/{id}:
     get:
-      tags: [Modelos]
-      summary: Obtener detalle de un modelo
-      description: Devuelve el modelo completo con la lista de clientes y sus métricas de riesgo.
+      tags: [Analisis]
+      summary: Obtener detalle de un cliente
+      description: Devuelve el resultado de análisis completo de un cliente concreto incluyendo nombre y email.
       parameters:
         - name: id
           in: path
@@ -291,46 +264,19 @@ paths:
           example: 1
       responses:
         '200':
-          description: Detalle del modelo
+          description: Detalle del cliente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ModeloDetalle'
-        '403':
-          description: El modelo no pertenece al usuario autenticado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ClienteAnalisisResponse'
         '404':
-          description: Modelo no encontrado
+          description: Cliente no encontrado
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
-    delete:
-      tags: [Modelos]
-      summary: Eliminar un modelo
-      description: Elimina el modelo y todas sus visitas y métricas asociadas.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-          example: 1
-      responses:
-        '204':
-          description: Modelo eliminado correctamente
-        '403':
-          description: El modelo no pertenece al usuario autenticado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Modelo no encontrado
+        '401':
+          description: Token inválido o ausente
           content:
             application/json:
               schema:
