@@ -1,0 +1,15 @@
+{
+  "clienteId": 1,
+  "nombre": "Carlos",
+  "apellidos": "García Martínez",
+  "email": "carlos.garcia@email.com",
+  "frecuenciaSemanal": 0.3,
+  "semanasInactivo": 5,
+  "tendenciaMensual": -80.0,
+  "franjaHoraria": "MANANA",
+  "deportePrincipal": "CARDIO",
+  "mesesComoSocio": 24,
+  "nivelRiesgo": "ALTO",
+  "probabilidadAbandono": 91.5,
+  "grupo": "Socio consolidado en riesgo"
+}

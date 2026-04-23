@@ -1,7 +1,6 @@
 package com.juandelacierva.ChurnGym.domain;
 
-public enum Rol 
-{
+public enum Rol {
     ADMIN,
     USUARIO
 }
