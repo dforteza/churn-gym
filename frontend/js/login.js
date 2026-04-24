@@ -1,4 +1,4 @@
-import { ENDPOINTS, MOCK_MODE, apiFetch } from './config.js';
+import { MOCK_MODE, apiLogin } from './config.js';
 import { redirectIfAuthenticated, redirectToDashboard, saveSession } from './auth.js';
 
 const MOCK_CREDENTIALS = {
@@ -10,6 +10,7 @@ const form = document.querySelector('[data-login-form]');
 const submitButton = document.querySelector('[data-submit-button]');
 const feedback = document.querySelector('[data-feedback]');
 
+// Si el usuario ya tiene sesion activa, evitamos que vuelva a ver el login.
 redirectIfAuthenticated();
 
 function setFeedback(message, type = 'error') {
@@ -24,23 +25,22 @@ function clearFeedback() {
 
 async function loginWithApi({ username, password }) {
   if (MOCK_MODE) {
+    // Validacion local para simular credenciales antes de leer la respuesta mock.
     if (username !== MOCK_CREDENTIALS.username || password !== MOCK_CREDENTIALS.password) {
       throw new Error('Credenciales incorrectas. Usa admin / admin1234 en modo mock.');
     }
 
-    return apiFetch(ENDPOINTS.login());
+    return apiLogin(username, password);
   }
 
-  return apiFetch(ENDPOINTS.login(), {
-    method: 'POST',
-    body: JSON.stringify({ username, password }),
-  });
+  return apiLogin(username, password);
 }
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   clearFeedback();
 
+  // Leemos los campos desde FormData para mantener el submit desacoplado del HTML concreto.
   const formData = new FormData(form);
   const username = formData.get('username')?.toString().trim() || '';
   const password = formData.get('password')?.toString() || '';
@@ -55,6 +55,7 @@ form.addEventListener('submit', async (event) => {
 
   try {
     const response = await loginWithApi({ username, password });
+    // Persistimos la sesion antes de navegar para que el dashboard la tenga disponible al cargar.
     saveSession(response);
     redirectToDashboard();
   } catch (error) {
