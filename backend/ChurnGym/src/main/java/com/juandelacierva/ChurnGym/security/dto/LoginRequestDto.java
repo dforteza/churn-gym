@@ -1,4 +1,4 @@
-package com.juandelacierva.ChurnGym.dto;
+package com.juandelacierva.ChurnGym.security.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -6,7 +6,7 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
-public class LoginRequest 
+public class LoginRequestDto 
 {
     @NotBlank
     private String username;
