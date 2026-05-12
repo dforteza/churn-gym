@@ -6,12 +6,12 @@ import java.util.List;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class AnalisisResumenResponse 
+public class AnalisisResumenResponseDto 
 {
     private LocalDateTime                   calculadoEn;
     private Integer                         totalClientes;
     private Integer                         alto;
     private Integer                         medio;
     private Integer                         bajo;
-    private List<ClienteAnalisisResponse>   resultados;
+    private List<ClienteAnalisisResponseDto>   resultados;
 }
