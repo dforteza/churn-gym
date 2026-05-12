@@ -1,14 +1,14 @@
 :root {
-  --panel: rgba(255, 250, 242, 0.92);
-  --panel-border: rgba(110, 74, 43, 0.14);
-  --primary: #b3572b;
-  --primary-dark: #7a3716;
-  --text: #24150d;
-  --muted: #6f594d;
+  /* Variables base del tema para reutilizar color, sombras y tipografia. */
+  --page-bg: #f4efe7;
+  --panel: rgba(255, 252, 247, 0.94);
+  --panel-border: rgba(88, 64, 49, 0.12);
+  --primary: #1f6f5f;
+  --text: #1f1a17;
   --error: #b42318;
   --success: #176c4b;
-  --shadow: 0 30px 80px rgba(63, 29, 12, 0.14);
-  font-family: "Bahnschrift", "Segoe UI Variable Text", sans-serif;
+  --shadow: 0 30px 80px rgba(45, 34, 28, 0.12);
+  font-family: "Segoe UI Variable Text", "Bahnschrift", sans-serif;
 }
 
 * {
@@ -19,97 +19,49 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--text);
+  /* El fondo combina gradientes para dar profundidad sin depender de imagenes. */
   background:
-    radial-gradient(circle at top left, rgba(236, 184, 129, 0.65), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(181, 87, 43, 0.18), transparent 30%),
-    linear-gradient(135deg, #fff8ef 0%, #f3e5d3 45%, #efd7c0 100%);
+    radial-gradient(circle at top, rgba(31, 111, 95, 0.12), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(201, 164, 119, 0.18), transparent 34%),
+    linear-gradient(160deg, var(--page-bg) 0%, #efe6da 100%);
 }
 
-.login-layout {
+.login-shell {
+  /* Centra la tarjeta tanto en vertical como en horizontal. */
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: minmax(280px, 520px) minmax(320px, 520px);
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
   padding: 2rem;
-}
-
-.login-hero {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.eyebrow {
-  margin: 0;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--primary-dark);
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.hero-title {
-  margin: 0;
-  font-size: clamp(2.5rem, 5vw, 4.6rem);
-  line-height: 0.92;
-}
-
-.hero-copy {
-  margin: 0;
-  max-width: 34rem;
-  color: var(--muted);
-  font-size: 1.05rem;
-  line-height: 1.7;
-}
-
-.hero-metrics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem;
-}
-
-.metric-chip {
-  padding: 0.9rem 1rem;
-  border-radius: 18px;
-  background: rgba(255, 250, 242, 0.7);
-  border: 1px solid rgba(122, 55, 22, 0.1);
-  box-shadow: 0 14px 34px rgba(63, 29, 12, 0.06);
-}
-
-.metric-chip strong,
-.metric-chip span {
-  display: block;
-}
-
-.metric-chip strong {
-  font-size: 1.1rem;
-}
-
-.metric-chip span {
-  color: var(--muted);
-  font-size: 0.92rem;
-  margin-top: 0.2rem;
 }
 
 .login-card {
-  padding: 2rem;
-  border-radius: 28px;
+  /* Tarjeta principal con efecto cristal para separar el formulario del fondo. */
+  width: min(100%, 460px);
+  padding: 2.25rem;
+  border-radius: 30px;
   background: var(--panel);
   border: 1px solid var(--panel-border);
   box-shadow: var(--shadow);
   backdrop-filter: blur(14px);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.login-card::before {
+  /* Barra decorativa superior para reforzar la identidad visual. */
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 6px;
+  background: linear-gradient(90deg, #d3ab72, var(--primary), #173a52);
 }
 
 .card-title {
-  margin: 0 0 0.4rem;
-  font-size: 1.9rem;
-}
-
-.card-copy {
-  margin: 0 0 1.5rem;
-  color: var(--muted);
-  line-height: 1.6;
+  margin: 0 0 1.75rem;
+  font-size: clamp(2rem, 5vw, 2.9rem);
+  line-height: 0.96;
 }
 
 .login-form {
@@ -120,6 +72,7 @@ body {
 .field {
   display: grid;
   gap: 0.45rem;
+  text-align: left;
 }
 
 .field label {
@@ -129,25 +82,20 @@ body {
 
 .field input {
   width: 100%;
-  padding: 0.95rem 1rem;
-  border-radius: 14px;
-  border: 1px solid rgba(110, 74, 43, 0.15);
-  background: rgba(255, 255, 255, 0.88);
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(88, 64, 49, 0.14);
+  background: rgba(255, 255, 255, 0.9);
   color: var(--text);
   font: inherit;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
 }
 
 .field input:focus {
-  outline: 3px solid rgba(179, 87, 43, 0.18);
-  border-color: rgba(179, 87, 43, 0.5);
-}
-
-.credentials-hint {
-  padding: 0.9rem 1rem;
-  border-radius: 14px;
-  background: rgba(181, 87, 43, 0.08);
-  color: var(--primary-dark);
-  font-size: 0.92rem;
+  /* Resaltamos el foco para mejorar accesibilidad y feedback visual. */
+  outline: 3px solid rgba(31, 111, 95, 0.14);
+  border-color: rgba(31, 111, 95, 0.44);
+  box-shadow: 0 0 0 4px rgba(31, 111, 95, 0.06);
 }
 
 .login-button {
@@ -155,13 +103,14 @@ body {
   border: 0;
   border-radius: 16px;
   padding: 1rem 1.2rem;
-  background: linear-gradient(135deg, #d06f3c, #8c3d1a);
-  color: #fffaf5;
+  background: linear-gradient(135deg, #173a52, var(--primary));
+  color: #f7fbfa;
   font: inherit;
   font-weight: 700;
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
-  box-shadow: 0 16px 30px rgba(140, 61, 26, 0.25);
+  box-shadow: 0 16px 30px rgba(23, 58, 82, 0.22);
+  margin-top: 0.25rem;
 }
 
 .login-button:hover {
@@ -169,12 +118,14 @@ body {
 }
 
 .login-button:disabled {
+  /* El boton bloqueado mantiene contexto visual mientras esperamos la respuesta. */
   opacity: 0.72;
   cursor: wait;
   transform: none;
 }
 
 .feedback {
+  /* Reservamos espacio para errores o avisos sin que el layout salte al aparecer el mensaje. */
   min-height: 1.5rem;
   margin: 0;
   font-size: 0.95rem;
@@ -188,14 +139,14 @@ body {
   color: var(--success);
 }
 
-@media (max-width: 920px) {
-  .login-layout {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    padding: 1.5rem;
+@media (max-width: 640px) {
+  /* En movil compactamos margenes y radio para que la tarjeta respire mejor en pantallas estrechas. */
+  .login-shell {
+    padding: 1rem;
   }
 
   .login-card {
-    padding: 1.5rem;
+    padding: 1.4rem;
+    border-radius: 24px;
   }
 }

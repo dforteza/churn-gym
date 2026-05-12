@@ -7,37 +7,9 @@
   <link rel="stylesheet" href="./css/login.css">
 </head>
 <body>
-  <main class="login-layout">
-    <section class="login-hero" aria-label="Presentacion del producto">
-      <p class="eyebrow">Anticipa el abandono antes de que ocurra.</p>
-      <h1 class="hero-title">Churn Gym Detector</h1>
-      <p class="hero-copy">
-        Inicia sesión para gestionar importaciones de clientes, analizar visitas y detectar
-        patrones de riesgo de abandono en tu gimnasio.
-      </p>
-
-      <div class="hero-metrics" aria-hidden="true">
-        <article class="metric-chip">
-          <strong>Carga de clientes</strong>
-          <span>Cargar clientes prexistentes</span>
-        </article>
-        <article class="metric-chip">
-          <strong>Importación de datos </strong>
-          <span>Cargar datos de clientes </span>
-        </article>
-        <article class="metric-chip">
-          <strong>Métricas de riesgo</strong>
-          <span>Riesgo bajo, medio y alto</span>
-        </article>
-      </div>
-    </section>
-
+  <main class="login-shell">
     <section class="login-card" aria-label="Formulario de acceso">
-      <h2 class="card-title">Acceso al panel</h2>
-      <p class="card-copy">
-        Este login, actualmente esta preparado para trabajar con el mock actual del proyecto y con la
-        futura API REST de Spring Boot.
-      </p>
+      <h1 class="card-title">Churn Gym Detector</h1>
 
       <form class="login-form" data-login-form novalidate>
         <div class="field">
@@ -49,10 +21,6 @@
           <label for="password">Contrasena</label>
           <input id="password" name="password" type="password" autocomplete="current-password" placeholder="admin1234" required>
         </div>
-
-        <p class="credentials-hint">
-          Modo mock activo: usa <strong>admin</strong> / <strong>admin1234</strong>.
-        </p>
 
         <button class="login-button" type="submit" data-submit-button>Entrar</button>
         <p class="feedback" data-feedback data-state="idle" aria-live="polite"></p>
