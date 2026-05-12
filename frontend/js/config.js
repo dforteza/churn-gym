@@ -1,104 +1,65 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// config.js — v2.0
-// ─────────────────────────────────────────────────────────────────────────────
-// Cambiar MOCK_MODE = false cuando Diego avise que el backend está listo.
-//
-// Endpoints:
-//   POST  /api/auth/login
-//   GET   /api/analisis?nivelRiesgo=ALTO&grupo=...
-//   POST  /api/analisis/lanzar
-//   GET   /api/analisis/cliente/{id}
-// ─────────────────────────────────────────────────────────────────────────────
-
+// Cambia este valor a false cuando el backend real este listo.
 const MOCK_MODE = true;
 
-const API_BASE  = 'http://localhost:8080/api';
-const MOCK_BASE = './mock';
+const API_BASE = 'http://localhost:8080/api';
+const MOCK_BASE = new URL('../mock/', import.meta.url);
 
-const ENDPOINTS = {
-  login:           ()   => MOCK_MODE ? `${MOCK_BASE}/auth.login.json`            : `${API_BASE}/auth/login`,
-  analisis:        ()   => MOCK_MODE ? `${MOCK_BASE}/analisis.json`               : `${API_BASE}/analisis`,
-  analisisLanzar:  ()   => MOCK_MODE ? `${MOCK_BASE}/analisis.lanzar.json`        : `${API_BASE}/analisis/lanzar`,
-  analisisCliente: (id) => MOCK_MODE ? `${MOCK_BASE}/analisis.cliente.${id}.json` : `${API_BASE}/analisis/cliente/${id}`,
+const APP_ROUTES = {
+  login: new URL('../index.html', import.meta.url).href,
 };
 
-// LOGIN
-async function apiLogin(username, password) {
-  if (MOCK_MODE) {
-    const res = await fetch(ENDPOINTS.login());
-    return res.json();
-  }
-  const res = await fetch(ENDPOINTS.login(), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
-  });
-  if (!res.ok) throw new Error('Credenciales incorrectas');
-  return res.json();
-}
+const ENDPOINTS = {
+  // En mock leemos un JSON local; en real apuntamos al endpoint HTTP.
+  login: () => MOCK_MODE ? `${MOCK_BASE}mock-auth-login.json` : `${API_BASE}/auth/login`,
+};
 
-// GET ANÁLISIS VIGENTE
-// nivelRiesgo: 'ALTO' | 'MEDIO' | 'BAJO' | null
-// grupo:       'Socio consolidado en riesgo' | 'Socio nuevo que no engancha' |
-//              'Socio activo estable' | 'Socio irregular' | null
-async function apiGetAnalisis(nivelRiesgo = null, grupo = null) {
-  if (MOCK_MODE) {
-    const res  = await fetch(ENDPOINTS.analisis());
-    const data = await res.json();
-    let resultados = data.resultados;
-    if (nivelRiesgo) resultados = resultados.filter(r => r.nivelRiesgo === nivelRiesgo);
-    if (grupo)       resultados = resultados.filter(r => r.grupo === grupo);
-    const alto  = resultados.filter(r => r.nivelRiesgo === 'ALTO').length;
-    const medio = resultados.filter(r => r.nivelRiesgo === 'MEDIO').length;
-    const bajo  = resultados.filter(r => r.nivelRiesgo === 'BAJO').length;
-    return { ...data, resultados, totalClientes: resultados.length, alto, medio, bajo };
-  }
-  const params = new URLSearchParams();
-  if (nivelRiesgo) params.append('nivelRiesgo', nivelRiesgo);
-  if (grupo)       params.append('grupo', grupo);
-  const query = params.toString() ? `?${params.toString()}` : '';
-  return apiFetch(`${ENDPOINTS.analisis()}${query}`);
-}
-
-// POST LANZAR ANÁLISIS
-async function apiLanzarAnalisis() {
-  if (MOCK_MODE) {
-    await new Promise(r => setTimeout(r, 1200));
-    const res = await fetch(ENDPOINTS.analisisLanzar());
-    return res.json();
-  }
-  return apiFetch(ENDPOINTS.analisisLanzar(), { method: 'POST' });
-}
-
-// GET DETALLE CLIENTE
-async function apiGetDetalleCliente(id) {
-  if (MOCK_MODE) {
-    const res = await fetch(ENDPOINTS.analisisCliente(id));
-    if (!res.ok) throw new Error('Cliente no encontrado');
-    return res.json();
-  }
-  return apiFetch(ENDPOINTS.analisisCliente(id));
-}
-
-// HELPER GENÉRICO CON JWT
 async function apiFetch(url, options = {}) {
   const token = localStorage.getItem('jwt_token');
+  const isFormData = options.body instanceof FormData;
+
+  // Solo enviamos JSON por defecto cuando el body no es FormData.
   const headers = {
-    'Content-Type': 'application/json',
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
-  const res = await fetch(url, { ...options, headers });
-  if (res.status === 401) {
+
+  const response = await fetch(url, { ...options, headers });
+
+  // Si el token ha caducado o no es valido, forzamos un logout suave.
+  if (response.status === 401) {
     localStorage.removeItem('jwt_token');
-    window.location.href = '/index.html';
-    return;
+    localStorage.removeItem('auth_user');
+    window.location.href = APP_ROUTES.login;
+    return null;
   }
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `Error ${res.status}`);
+
+  if (response.status === 204) {
+    return null;
   }
-  return res.json();
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || `Error ${response.status}`);
+  }
+
+  // Permitimos reutilizar este helper con endpoints JSON y endpoints de texto plano.
+  const contentType = response.headers.get('content-type') || '';
+  return contentType.includes('application/json') ? response.json() : response.text();
 }
 
-export { apiLogin, apiGetAnalisis, apiLanzarAnalisis, apiGetDetalleCliente };
+function apiLogin(username, password) {
+  // En mock ignoramos el body porque el origen es un archivo estatico.
+  return apiFetch(ENDPOINTS.login(), {
+    method: MOCK_MODE ? 'GET' : 'POST',
+    body: MOCK_MODE ? undefined : JSON.stringify({ username, password }),
+  });
+}
+
+export {
+  APP_ROUTES,
+  ENDPOINTS,
+  MOCK_MODE,
+  apiFetch,
+  apiLogin,
+};
