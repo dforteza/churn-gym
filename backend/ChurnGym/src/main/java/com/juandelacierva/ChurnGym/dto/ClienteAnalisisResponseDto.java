@@ -4,7 +4,7 @@ import lombok.*;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class ClienteAnalisisResponse 
+public class ClienteAnalisisResponseDto 
 {
     private Long    clienteId;
     private String  nombre;

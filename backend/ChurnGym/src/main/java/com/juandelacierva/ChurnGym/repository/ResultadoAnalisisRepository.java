@@ -1,6 +1,6 @@
 package com.juandelacierva.ChurnGym.repository;
 
-import com.juandelacierva.ChurnGym.entity.ResultadoAnalisis;
+import com.juandelacierva.ChurnGym.domain.ResultadoAnalisis;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

@@ -1,11 +1,11 @@
 package com.juandelacierva.ChurnGym.service.interfaces;
 
-import com.juandelacierva.ChurnGym.dto.AnalisisResumenResponse;
-import com.juandelacierva.ChurnGym.dto.ClienteAnalisisResponse;
+import com.juandelacierva.ChurnGym.dto.AnalisisResumenResponseDto;
+import com.juandelacierva.ChurnGym.dto.ClienteAnalisisResponseDto;
 
 public interface AnalisisService 
 {
-    AnalisisResumenResponse getAnalisisVigente();
-    AnalisisResumenResponse lanzarAnalisis();
-    ClienteAnalisisResponse getDetalleCliente(Long clienteId);
+    AnalisisResumenResponseDto getAnalisisVigente();
+    AnalisisResumenResponseDto lanzarAnalisis();
+    ClienteAnalisisResponseDto getDetalleCliente(Long clienteId);
 }
