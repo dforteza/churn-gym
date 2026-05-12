@@ -11,15 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * BLOQUE 3 — Cliente HTTP hacia el microservicio Python de clustering.
- *
- * Envía todos los clientes al endpoint /cluster y devuelve un mapa
- * clienteId → grupo asignado por KMeans.
- *
- * Si el microservicio no está disponible, devuelve un mapa vacío y
- * AnalisisServiceImpl usa el fallback de reglas de MotorRiesgoServiceImpl.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,10 +20,6 @@ public class ClusteringClient {
 
     @Value("${clustering.service.url}")
     private String clusteringUrl;
-
-    // ---------------------------------------------------------------
-    // DTOs internos (request / response hacia Python)
-    // ---------------------------------------------------------------
 
     record ClienteClusterRequest(
             Long   id,
@@ -45,17 +32,6 @@ public class ClusteringClient {
 
     record ClusteringResponse(List<GrupoResultado> resultados) {}
 
-    // ---------------------------------------------------------------
-    // Método principal
-    // ---------------------------------------------------------------
-
-    /**
-     * Llama al microservicio Python con la lista completa de clientes
-     * y devuelve el mapa id → grupo resultante del KMeans.
-     *
-     * KMeans necesita todos los clientes a la vez para calcular los clusters;
-     * por eso la llamada es batch y no individual.
-     */
     public Map<Long, String> obtenerGrupos(List<ClienteDatos> clientes) {
         List<ClienteClusterRequest> payload = clientes.stream()
                 .map(c -> new ClienteClusterRequest(
