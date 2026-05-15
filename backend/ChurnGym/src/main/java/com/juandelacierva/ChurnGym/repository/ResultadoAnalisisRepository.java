@@ -6,5 +6,6 @@ import java.util.Optional;
 
 public interface ResultadoAnalisisRepository extends JpaRepository<ResultadoAnalisis, Long> 
 {
+    // SELECT * FROM resultados_analisis WHERE cliente_datos_id = ?
     Optional<ResultadoAnalisis> findByClienteDatosId(Long id);
 }
