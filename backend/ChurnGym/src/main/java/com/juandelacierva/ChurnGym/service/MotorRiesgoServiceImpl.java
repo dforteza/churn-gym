@@ -18,9 +18,31 @@ public class MotorRiesgoServiceImpl implements MotorRiesgoService
     private static final double UMBRAL_MEDIO = 0.30;
 
     @Override
-    public Double calcularProbabilidad(ClienteDatos clienteDatos) 
+    public Double calcularProbabilidad(ClienteDatos cd)
     {
-        return (0.0);
+        // Normalización de variables al rango [0, 1]
+        double semanas    = Math.min(cd.getSemanasInactivo() != null  ? cd.getSemanasInactivo()    : 0, 12) / 12.0;
+        double frecuencia = Math.min(cd.getFrecuenciaSemanal() != null ? cd.getFrecuenciaSemanal() : 0, 7)  / 7.0;
+        double tendencia  = cd.getTendenciaMensual() != null ? cd.getTendenciaMensual() : 0.0;
+        double meses      = Math.min(cd.getMesesComoSocio() != null   ? cd.getMesesComoSocio()     : 0, 60) / 60.0;
+
+        // Tendencia normalizada: -100% → 1.0 (muy malo), +100% → 0.0 (muy bueno)
+        double tendenciaNorm = Math.max(0.0, Math.min(1.0, (-tendencia + 100.0) / 200.0));
+
+        // z = combinación lineal de predictores
+        // Coeficientes obtenidos por calibración empírica (calibrar_pesos.py — Nelder-Mead, 12/12 perfiles)
+        double z =
+                -2.081                        // intercepto (sesgo hacia no abandono)
+                + 3.7185 * semanas            // inactividad: máximo predictor
+                + 0.6654 * (1.0 - frecuencia) // baja frecuencia: segundo predictor
+                + 1.5134 * tendenciaNorm      // tendencia negativa: tercer predictor
+                - 1.1225 * meses;             // antigüedad protege levemente
+
+        // Función sigmoide: transforma z en probabilidad [0, 1]
+        double prob = 1.0 / (1.0 + Math.exp(-z));
+
+        // Redondeo a 4 decimales para evitar artefactos de coma flotante
+        return Math.round(prob * 10000.0) / 10000.0;
     }
 
     /**
