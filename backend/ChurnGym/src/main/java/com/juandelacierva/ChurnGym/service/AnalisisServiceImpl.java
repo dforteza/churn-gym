@@ -22,75 +22,76 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class AnalisisServiceImpl implements AnalisisService
-{
-    private final ClienteDatosRepository      clienteDatosRepository;
+public class AnalisisServiceImpl implements AnalisisService {
+    private final ClienteDatosRepository clienteDatosRepository;
     private final ResultadoAnalisisRepository resultadoAnalisisRepository;
-    private final MotorRiesgoService          motorRiesgoService;
-    private final ClusteringClient            clusteringClient;
-    private final AnalisisMapper              analisisMapper;
+    private final MotorRiesgoService motorRiesgoService;
+    private final ClusteringClient clusteringClient;
+    private final AnalisisMapper analisisMapper;
 
     @Override
     @Transactional(readOnly = true)
-    public AnalisisResumenResponseDto getAnalisisVigente() 
-    {
-        // 1- OBTENER RESULTADOS DE ANALISIS
+    public AnalisisResumenResponseDto getAnalisisVigente() {
         List<ResultadoAnalisis> resultados = resultadoAnalisisRepository.findAll();
 
-        // 2- FECHA DE CÁLCULO (SI NO HAY RESULTADOS, USAMOS FECHA ACTUAL)
         LocalDateTime calculadoEn = resultados.isEmpty()
                 ? LocalDateTime.now()
                 : resultados.get(0).getCalculadoEn();
 
-        // 3- MAPEAR A DTO
-        return (analisisMapper.toAnalisisResumenResponse(resultados, calculadoEn));
-    }
+        AnalisisResumenResponseDto response = analisisMapper.toAnalisisResumenResponse(resultados, calculadoEn);
 
-    @Override
-    @Transactional
-    public AnalisisResumenResponseDto lanzarAnalisis() 
-    {
-        // 1- BORRAR TABLA RESULTADO_ANALISIS
-        resultadoAnalisisRepository.deleteAllInBatch();
-
-        // 2- OBTENER CLIENTES
-        List<ClienteDatos> clientes = clienteDatosRepository.findAll();
-
-        LocalDateTime ahora = LocalDateTime.now();
-
-        // 3- CLUSTERING BATCH: llamada al microservicio Python (KMeans)
-        //    Si el servicio no está disponible, grupos queda vacío y se usa el fallback de reglas
-        Map<Long, String> grupos = clusteringClient.obtenerGrupos(clientes);
-
-        // 4- CALCULAR RESULTADOS
-        List<ResultadoAnalisis> resultados = clientes
-                .stream()
-                .map(datos -> {
-                    ResultadoAnalisis r = new ResultadoAnalisis();
-                    r.setClienteDatos(datos);
-                    r.setNivelRiesgo(motorRiesgoService.calcularNivel(datos));
-                    r.setProbabilidadAbandono(motorRiesgoService.calcularProbabilidad(datos));
-                    r.setGrupo(grupos.getOrDefault(datos.getId(), motorRiesgoService.asignarGrupo(datos)));
-                    r.setCalculadoEn(ahora);
-                    return r;
-                })
-                .toList();
-        
-        // 4- GUARDAR RESULTADOS EN BD
-        resultadoAnalisisRepository.saveAll(Objects.requireNonNull(resultados));
-
-        return (analisisMapper.toAnalisisResumenResponse(resultados, ahora));
+        return (response);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ClienteAnalisisResponseDto getDetalleCliente(Long clienteId) 
-    {
+    public ClienteAnalisisResponseDto getDetalleCliente(Long clienteId) {
         ResultadoAnalisis resultado = resultadoAnalisisRepository
                 .findByClienteDatosId(clienteId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No se encontró análisis para el cliente con id: " + clienteId));
 
-        return (analisisMapper.toClienteAnalisisResponse(resultado, resultado.getClienteDatos().getClientePrivado()));
+        ClienteAnalisisResponseDto response = analisisMapper.toClienteAnalisisResponse(resultado,
+                resultado.getClienteDatos().getClientePrivado());
+
+        return (response);
     }
+
+    @Override
+    @Transactional
+    public AnalisisResumenResponseDto lanzarAnalisis() {
+        resultadoAnalisisRepository.deleteAllInBatch();
+
+        List<ClienteDatos> clientes = clienteDatosRepository.findAll();
+        LocalDateTime ahora = LocalDateTime.now();
+
+        // llamada a sklearn KMeans clustering
+        Map<Long, String> grupos = clusteringClient.obtenerGrupos(clientes);
+
+        List<ResultadoAnalisis> resultados = clientes
+                .stream()
+                .map(cliente -> {
+                    ResultadoAnalisis r = new ResultadoAnalisis();
+                    r.setClienteDatos(cliente);
+                    r.setNivelRiesgo(motorRiesgoService.calcularNivel(cliente));
+                    r.setProbabilidadAbandono(motorRiesgoService.calcularProbabilidad(cliente));
+                    
+                    String grupo = grupos.get(cliente.getId());
+                    if (grupo == null)
+                        grupo = motorRiesgoService.asignarGrupo(cliente);
+
+                    r.setGrupo(grupo);
+                    r.setCalculadoEn(ahora);
+
+                    return r;
+                })
+                .toList();
+
+        resultadoAnalisisRepository.saveAll(Objects.requireNonNull(resultados));
+
+        AnalisisResumenResponseDto response = analisisMapper.toAnalisisResumenResponse(resultados, ahora);
+
+        return (response);
+    }
+
 }

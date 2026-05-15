@@ -18,14 +18,15 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService {
-
+public class AuthServiceImpl implements AuthService 
+{
     private final AuthenticationManager authenticationManager;
-    private final JwtGenerator jwtGenerator;
-    private final UsuarioRepository usuarioRepository;
+    private final JwtGenerator          jwtGenerator;
+    private final UsuarioRepository     usuarioRepository;
 
     @Override
-    public LoginResponseDto login(LoginRequestDto request) {
+    public LoginResponseDto login(LoginRequestDto request) 
+    {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 request.getUsername(),
@@ -37,10 +38,15 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtGenerator.generateToken(authentication);
 
-        Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
-            .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        Usuario usuario = usuarioRepository
+                .findByUsername(request.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        return new LoginResponseDto(token, usuario.getUsername(), usuario.getRol().name());
+        return (new LoginResponseDto(
+                        token,
+                        usuario.getUsername(), 
+                        usuario.getRol().name()
+                    ));
     }
 
 }
