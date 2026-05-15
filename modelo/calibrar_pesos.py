@@ -45,6 +45,7 @@ PERFILES = {
     "lleva meses yendo cada vez menos":     (2,  1.5, -35, 12,  0.38, 0.60),
     "6 semanas sin venir, tendencia mala":  (6,  1.0, -50,  8,  0.68, 0.88),
     "lleva 3 años y ha desaparecido":       (5,  0.5, -60, 36,  0.65, 0.85),
+    "veterano con señales activas graves":  (4,  1.2, -55, 45,  0.55, 0.75),
     "8 semanas sin entrar, frecuencia 0":   (8,  0.0, -80, 10,  0.88, 0.97),
     "caso extremo — baja segura":           (12, 0.0,-100,  0,  0.95, 0.99),
 }
