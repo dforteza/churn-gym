@@ -22,12 +22,13 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class AnalisisServiceImpl implements AnalisisService {
-    private final ClienteDatosRepository clienteDatosRepository;
-    private final ResultadoAnalisisRepository resultadoAnalisisRepository;
-    private final MotorRiesgoService motorRiesgoService;
-    private final ClusteringClient clusteringClient;
-    private final AnalisisMapper analisisMapper;
+public class AnalisisServiceImpl implements AnalisisService 
+{
+    private final ClienteDatosRepository        clienteDatosRepository;
+    private final ResultadoAnalisisRepository   resultadoAnalisisRepository;
+    private final MotorRiesgoService            motorRiesgoService;
+    private final ClusteringClient              clusteringClient;
+    private final AnalisisMapper                analisisMapper;
 
     @Override
     @Transactional(readOnly = true)

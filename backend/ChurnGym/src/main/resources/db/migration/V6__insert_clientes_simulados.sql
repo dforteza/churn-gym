@@ -52,8 +52,8 @@ INSERT INTO clientes_privados (id, nombre, apellidos, dni, gmail) VALUES
 (48, 'Lorena',     'Prieto Gómez',         '10000048Z', 'lorena.prieto@churngym.es'),
 (49, 'Ignacio',    'Méndez Martín',        '10000049Z', 'ignacio.mendez@churngym.es'),
 (50, 'Yolanda',    'Cruz Jiménez',         '10000050Z', 'yolanda.cruz@churngym.es');
-
-INSERT INTO clientes_datos (id, cliente_privado_id, anyo_nacimiento, meses_como_socio, franja_horaria, deporte_principal, frecuencia_semanal, semanas_inactivo, tendencia_mensual) VALUES
+ 
+INSERT INTO clientes_datos (id, cliente_privado_id, anyo_nacimiento, meses_como_socio,franja_horaria, deporte_principal, frecuencia_semanal, semanas_inactivo, tendencia_mensual) VALUES
 (1,  1,  1990, 1,  'MANANA', 'CROSSFIT',          0.7, 6, -55.7),
 (2,  2,  1983, 3,  'MANANA', 'MUSCULACION',        0.6, 6, -50.1),
 (3,  3,  1990, 3,  'NOCHE',  'CLASES_COLECTIVAS',  0.3, 2, -22.1),
