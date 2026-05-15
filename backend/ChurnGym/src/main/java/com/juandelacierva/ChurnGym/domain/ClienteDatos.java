@@ -1,5 +1,8 @@
 package com.juandelacierva.ChurnGym.domain;
 
+import com.juandelacierva.ChurnGym.domain.enums.DeportePrincipal;
+import com.juandelacierva.ChurnGym.domain.enums.FranjaHoraria;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,14 +10,15 @@ import lombok.*;
 @Table(name = "clientes_datos")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class ClienteDatos {
-
+@Builder
+public class ClienteDatos 
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "cliente_privado_id")
     private ClientePrivado clientePrivado;
 
     private Integer anyoNacimiento;

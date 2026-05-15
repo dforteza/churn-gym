@@ -8,7 +8,7 @@ CREATE TABLE clientes_datos (
     meses_como_socio    INTEGER,
     franja_horaria      VARCHAR(10)   NOT NULL CHECK (franja_horaria IN ('MANANA', 'TARDE', 'NOCHE')),
     deporte_principal   VARCHAR(20)   NOT NULL CHECK (deporte_principal IN ('MUSCULACION', 'CARDIO', 'CROSSFIT', 'CLASES_COLECTIVAS', 'MIXTO')),
-    frecuencia_semanal  NUMERIC(4,1),
+    frecuencia_semanal  DOUBLE PRECISION,
     semanas_inactivo    INTEGER,
-    tendencia_mensual   NUMERIC(5,1)
+    tendencia_mensual   DOUBLE PRECISION
 );

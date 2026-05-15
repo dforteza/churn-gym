@@ -6,7 +6,7 @@ CREATE TABLE resultados_analisis (
     id                    BIGSERIAL    PRIMARY KEY,
     cliente_datos_id      BIGINT       NOT NULL UNIQUE REFERENCES clientes_datos(id),
     nivel_riesgo          VARCHAR(10)  NOT NULL CHECK (nivel_riesgo IN ('BAJO', 'MEDIO', 'ALTO')),
-    probabilidad_abandono NUMERIC(5,2) NOT NULL,
+    probabilidad_abandono DOUBLE PRECISION NOT NULL,
     grupo                 VARCHAR(50),
     calculado_en          TIMESTAMP    NOT NULL
 );

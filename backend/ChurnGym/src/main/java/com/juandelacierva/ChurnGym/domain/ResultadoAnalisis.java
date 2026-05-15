@@ -4,12 +4,15 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import com.juandelacierva.ChurnGym.domain.enums.NivelRiesgo;
+
 @Entity
 @Table(name = "resultados_analisis")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class ResultadoAnalisis {
-
+@Builder
+public class ResultadoAnalisis 
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +28,7 @@ public class ResultadoAnalisis {
     @Column(nullable = false)
     private Double probabilidadAbandono;
 
+    @Column(nullable = false)
     private String grupo;
 
     @Column(nullable = false)
