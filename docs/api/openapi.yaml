@@ -1,3 +1,4 @@
+
 openapi: 3.0.3
 
 info:
@@ -14,196 +15,11 @@ info:
 servers:
   - url: http://localhost:8080/api
     description: Desarrollo local
-  - url: https://churn-gym-backend.onrender.com/api
-    description: Producción (Render)
 
 security:
   - bearerAuth: []
 
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
-  schemas:
-
-    # ── AUTH ──────────────────────────────────────────────────────────────────
-    LoginRequest:
-      type: object
-      required: [username, password]
-      properties:
-        username:
-          type: string
-          example: admin
-        password:
-          type: string
-          example: admin1234
-
-    LoginResponse:
-      type: object
-      properties:
-        token:
-          type: string
-          example: eyJhbGciOiJIUzI1NiJ9...
-        username:
-          type: string
-          example: admin
-        rol:
-          type: string
-          enum: [ADMIN, USUARIO]
-          example: ADMIN
-
-    # ── RESULTADO POR CLIENTE ─────────────────────────────────────────────────
-    ClienteAnalisisResponse:
-      type: object
-      properties:
-        clienteId:
-          type: integer
-          example: 1
-        nombre:
-          type: string
-          description: Nombre del cliente (de cliente_privado)
-          example: Carlos
-        apellidos:
-          type: string
-          description: Apellidos del cliente (de cliente_privado)
-          example: García Martínez
-        email:
-          type: string
-          description: Email del cliente — para futuras notificaciones
-          example: carlos.garcia@email.com
-        frecuenciaSemanal:
-          type: number
-          format: double
-          description: Visitas medias por semana
-          example: 0.5
-        semanasInactivo:
-          type: integer
-          description: Semanas consecutivas sin actividad
-          example: 5
-        tendenciaMensual:
-          type: number
-          format: double
-          description: Variación porcentual de actividad en el último mes
-          example: -72.0
-        franjaHoraria:
-          type: string
-          enum: [MANANA, TARDE, NOCHE]
-          example: MANANA
-        deportePrincipal:
-          type: string
-          enum: [MUSCULACION, CARDIO, CROSSFIT, CLASES_COLECTIVAS, MIXTO]
-          example: CARDIO
-        mesesComoSocio:
-          type: integer
-          description: Antigüedad del socio en meses
-          example: 24
-        nivelRiesgo:
-          type: string
-          enum: [BAJO, MEDIO, ALTO]
-          example: ALTO
-        probabilidadAbandono:
-          type: number
-          format: double
-          description: Probabilidad de abandono en porcentaje (0-100)
-          example: 91.5
-        grupo:
-          type: string
-          description: Segmento al que pertenece el cliente
-          enum:
-            - Socio consolidado en riesgo
-            - Socio nuevo que no engancha
-            - Socio activo estable
-            - Socio irregular
-          example: Socio consolidado en riesgo
-
-    # ── PAGINACIÓN ────────────────────────────────────────────────────────────
-    PageMetadata:
-      type: object
-      description: Metadatos de paginación devueltos por Spring Page
-      properties:
-        totalElements:
-          type: integer
-          description: Total de registros en BD que cumplen los filtros aplicados
-          example: 12
-        totalPages:
-          type: integer
-          description: Número total de páginas
-          example: 2
-        number:
-          type: integer
-          description: Página actual (0-indexed)
-          example: 0
-        size:
-          type: integer
-          description: Elementos por página solicitados
-          example: 10
-        numberOfElements:
-          type: integer
-          description: Elementos devueltos en esta página
-          example: 10
-        first:
-          type: boolean
-          example: true
-        last:
-          type: boolean
-          example: false
-        empty:
-          type: boolean
-          example: false
-
-    # ── RESUMEN DEL ANÁLISIS ──────────────────────────────────────────────────
-    AnalisisResumenResponse:
-      type: object
-      properties:
-        calculadoEn:
-          type: string
-          format: date-time
-          example: 2026-04-18T11:45:00
-        totalClientes:
-          type: integer
-          description: Total global de clientes — siempre refleja todos, independiente de los filtros
-          example: 50
-        alto:
-          type: integer
-          description: Clientes en riesgo ALTO (global)
-          example: 12
-        medio:
-          type: integer
-          description: Clientes en riesgo MEDIO (global)
-          example: 20
-        bajo:
-          type: integer
-          description: Clientes en riesgo BAJO (global)
-          example: 18
-        resultados:
-          description: Página de resultados filtrados y ordenados
-          allOf:
-            - $ref: '#/components/schemas/PageMetadata'
-            - type: object
-              properties:
-                content:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/ClienteAnalisisResponse'
-
-    # ── ERRORES ───────────────────────────────────────────────────────────────
-    ErrorResponse:
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        status:
-          type: integer
-        error:
-          type: string
-        message:
-          type: string
-
-# ── ENDPOINTS ─────────────────────────────────────────────────────────────────
+# == ENDPOINTS =================================================================
 paths:
 
   /auth/login:
@@ -255,10 +71,10 @@ paths:
           schema:
             type: string
             enum:
-              - Socio consolidado en riesgo
-              - Socio nuevo que no engancha
-              - Socio activo estable
-              - Socio irregular
+              - COSOLIDADO_EN_RIESGO
+              - SOCIO_NUEVO_QUE_NO_ENGANCHA
+              - SOCIO_ACTIVO_ESTABLE
+              - SOCIO_IRREGULAR
           description: Filtrar por grupo de segmentación
         - name: franjaHoraria
           in: query
@@ -367,3 +183,187 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    # == AUTH ==================================================================
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          example: admin
+        password:
+          type: string
+          example: admin1234
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiJ9...
+        username:
+          type: string
+          example: admin
+        rol:
+          type: string
+          enum: [ADMIN, USUARIO]
+          example: ADMIN
+
+    # == RESULTADO POR CLIENTE =================================================
+    ClienteAnalisisResponse:
+      type: object
+      properties:
+        clienteId:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          description: Nombre del cliente (de cliente_privado)
+          example: Carlos
+        apellidos:
+          type: string
+          description: Apellidos del cliente (de cliente_privado)
+          example: García Martínez
+        email:
+          type: string
+          description: Email del cliente — para enviar notificaciones (de cliente_privado)
+          example: carlos.garcia@email.com
+        frecuenciaSemanal:
+          type: number
+          format: double
+          description: Visitas medias por semana (de cliente_datos)
+          example: 0.5
+        semanasInactivo:
+          type: integer
+          description: Semanas consecutivas sin actividad (de cliente_datos)
+          example: 5
+        tendenciaMensual:
+          type: number
+          format: double
+          description: Variación porcentual de actividad en el último mes (de cliente_datos)
+          example: -72.0
+        franjaHoraria:
+          type: string
+          enum: [MANANA, TARDE, NOCHE]
+          example: MANANA
+        deportePrincipal:
+          type: string
+          enum: [MUSCULACION, CARDIO, CROSSFIT, CLASES_COLECTIVAS, MIXTO]
+          example: CARDIO
+        mesesComoSocio:
+          type: integer
+          description: Antigüedad del socio en meses (de cliente_datos)
+          example: 24
+        nivelRiesgo:
+          type: string
+          enum: [BAJO, MEDIO, ALTO]
+          example: ALTO
+        probabilidadAbandono:
+          type: number
+          format: double
+          description: Probabilidad de abandono en porcentaje (0-100)
+          example: 91.5
+        grupo:
+          type: string
+          description: Segmento al que pertenece el cliente
+          enum:
+            - COSOLIDADO_EN_RIESGO
+            - SOCIO_NUEVO_QUE_NO_ENGANCHA
+            - SOCIO_ACTIVO_ESTABLE
+            - SOCIO_IRREGULAR
+          example: COSOLIDADO_EN_RIESGO
+
+    # == PAGINACIÓN ============================================================
+    PageMetadata:
+      type: object
+      description: Metadatos de paginación devueltos por Spring Page
+      properties:
+        totalElements:
+          type: integer
+          description: Total de registros en BD que cumplen los filtros aplicados
+          example: 12
+        totalPages:
+          type: integer
+          description: Número total de páginas
+          example: 2
+        number:
+          type: integer
+          description: Página actual (0-indexed)
+          example: 0
+        size:
+          type: integer
+          description: Elementos por página solicitados
+          example: 10
+        numberOfElements:
+          type: integer
+          description: Elementos devueltos en esta página
+          example: 10
+        first:
+          type: boolean
+          example: true
+        last:
+          type: boolean
+          example: false
+        empty:
+          type: boolean
+          example: false
+
+    # == RESUMEN DEL ANÁLISIS ==================================================
+    AnalisisResumenResponse:
+      type: object
+      properties:
+        calculadoEn:
+          type: string
+          format: date-time
+          example: 2026-04-18T11:45:00
+        totalClientes:
+          type: integer
+          description: Total global de clientes (independiente de los filtros aplicados)
+          example: 50
+        alto:
+          type: integer
+          description: Clientes en riesgo ALTO (global)
+          example: 12
+        medio:
+          type: integer
+          description: Clientes en riesgo MEDIO (global)
+          example: 20
+        bajo:
+          type: integer
+          description: Clientes en riesgo BAJO (global)
+          example: 18
+        resultados:
+          description: Página de resultados filtrados y ordenados
+          allOf:
+            - $ref: '#/components/schemas/PageMetadata'
+            - type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ClienteAnalisisResponse'
+
+    # == ERRORES ===============================================================
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+
