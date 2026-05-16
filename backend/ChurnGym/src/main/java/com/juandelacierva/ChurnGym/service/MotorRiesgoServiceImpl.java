@@ -1,109 +1,91 @@
 package com.juandelacierva.ChurnGym.service;
 
 import com.juandelacierva.ChurnGym.domain.ClienteDatos;
+import com.juandelacierva.ChurnGym.domain.enums.GrupoRiesgo;
 import com.juandelacierva.ChurnGym.domain.enums.NivelRiesgo;
 import com.juandelacierva.ChurnGym.service.interfaces.MotorRiesgoService;
 
 import org.springframework.stereotype.Service;
 
-/**
- * Motor de Reglas de Riesgo (Java)
- */
 @Service
-public class MotorRiesgoServiceImpl implements MotorRiesgoService 
+public class MotorRiesgoServiceImpl implements MotorRiesgoService
 {
-    // Umbrales de clasificación sobre la probabilidad calculada (0.0 – 1.0)
+    // ── Umbrales de clasificación (prob en [0.0, 1.0]) ────────────────────────
     private static final double UMBRAL_ALTO  = 0.65;
     private static final double UMBRAL_MEDIO = 0.30;
+
+    // ── Pesos del modelo — calibrados con Nelder-Mead (calibrar_pesos.py) ─────
+    private static final double BIAS         = -1.95;
+    private static final double W_SEMANAS    =  4.61;
+    private static final double W_FRECUENCIA =  0.34;
+    private static final double W_TENDENCIA  =  1.53;
+    private static final double W_ANTIGUEDAD = -1.13;
+
+    // ── Límites de normalización al rango [0, 1] ──────────────────────────────
+    private static final double MAX_SEMANAS    = 12.0;
+    private static final double MAX_FRECUENCIA =  7.0;
+    private static final double MAX_MESES      = 60.0;
+
+    // ── Umbrales de reglas de segmentación de grupo ───────────────────────────
+    private static final int    MESES_CONSOLIDADO = 12;
+    private static final int    SEMANAS_AUSENCIA  =  3;
+    private static final int    MESES_NUEVO       =  3;
+    private static final double FREC_MIN_ENGANCHE =  1.0;
+    private static final double FREC_MIN_ESTABLE  =  2.0;
+    private static final int    MESES_MIN_PATRON  =  4;
 
     @Override
     public Double calcularProbabilidad(ClienteDatos cd)
     {
-        // Normalización de variables al rango [0, 1]
-        double semanas    = Math.min(cd.getSemanasInactivo() != null  ? cd.getSemanasInactivo()    : 0, 12) / 12.0;
-        double frecuencia = Math.min(cd.getFrecuenciaSemanal() != null ? cd.getFrecuenciaSemanal() : 0, 7)  / 7.0;
+        double semanas    = Math.min(cd.getSemanasInactivo()   != null ? cd.getSemanasInactivo()   : 0, MAX_SEMANAS)    / MAX_SEMANAS;
+        double frecuencia = Math.min(cd.getFrecuenciaSemanal() != null ? cd.getFrecuenciaSemanal() : 0, MAX_FRECUENCIA) / MAX_FRECUENCIA;
         double tendencia  = cd.getTendenciaMensual() != null ? cd.getTendenciaMensual() : 0.0;
-        double meses      = Math.min(cd.getMesesComoSocio() != null   ? cd.getMesesComoSocio()     : 0, 60) / 60.0;
+        double meses      = Math.min(cd.getMesesComoSocio()    != null ? cd.getMesesComoSocio()    : 0, MAX_MESES)      / MAX_MESES;
         double tendenciaNorm = Math.max(0.0, Math.min(1.0, (-tendencia + 100.0) / 200.0));
 
-        // z = combinación lineal de predictores
-        // Coeficientes obtenidos por Nelder-Mead simplex optimization (calibrar_pesos.py)
+        double z = BIAS
+                + W_SEMANAS    * semanas
+                + W_FRECUENCIA * (1.0 - frecuencia)
+                + W_TENDENCIA  * tendenciaNorm
+                + W_ANTIGUEDAD * meses;
 
-        double z =
-                -1.95                       // bias (intercepto)                   
-                + 4.61 * semanas            // semanas inactivo
-                + 0.34 * (1.0 - frecuencia) // frecuencia baja
-                + 1.53 * tendenciaNorm      // tendencia mala
-                - 1.13 * meses;             // antigüedad (protector)
-                
-        // Función sigmoide: transforma z en probabilidad [0, 1]
         double prob = 1.0 / (1.0 + Math.exp(-z));
 
-        // Redondeo a 2 decimales para facilitar lectura y comparación
         return (Math.round(prob * 100.0) / 100.0);
     }
 
-    /**
-     * Clasifica el nivel de riesgo derivándolo de la probabilidad calculada.
-     *   - ALTO  : prob ≥ 0.65
-     *   - MEDIO : prob ≥ 0.30
-     *   - BAJO  : prob < 0.30
-     */
     @Override
-    public NivelRiesgo calcularNivel(ClienteDatos clienteDatos) 
+    public NivelRiesgo calcularNivel(ClienteDatos clienteDatos)
     {
-        NivelRiesgo nivel;
-        double      prob;
-
-        prob = calcularProbabilidad(clienteDatos);
+        double prob = calcularProbabilidad(clienteDatos);
 
         if (prob >= UMBRAL_ALTO)
-            nivel = NivelRiesgo.ALTO;
+            return NivelRiesgo.ALTO;
         else if (prob >= UMBRAL_MEDIO)
-            nivel = NivelRiesgo.MEDIO;
+            return NivelRiesgo.MEDIO;
         else
-            nivel = NivelRiesgo.BAJO;
-
-        return (nivel);
+            return NivelRiesgo.BAJO;
     }
 
-    /**
-     * PLACEHOLDER — será reemplazado en Bloque 3 por una llamada HTTP
-     * al microservicio Python (KMeans clustering).
-     *
-     * Segmentación provisional basada en reglas de negocio:
-     *   G1 CONSOLIDADO_EN_RIESGO : socio antiguo (>12 meses) con ≥3 semanas de ausencia
-     *   G2 NUEVO_SIN_ENGANCHE    : socio nuevo (≤3 meses) con frecuencia < 1 vez/semana
-     *   G3 ACTIVO_ESTABLE        : asistencia regular (≥2/sem) sin ausencias recientes
-     *   G4 IRREGULAR             : red de seguridad para perfiles no clasificables
-     */
     @Override
-    public String asignarGrupo(ClienteDatos clienteDatos) 
+    public GrupoRiesgo asignarGrupo(ClienteDatos clienteDatos)
     {
-        String grupo;
-
-        int    semanas    = clienteDatos.getSemanasInactivo() != null ? clienteDatos.getSemanasInactivo() : 0;
-        int    meses      = clienteDatos.getMesesComoSocio()  != null ? clienteDatos.getMesesComoSocio()  : 0;
+        int    semanas    = clienteDatos.getSemanasInactivo()   != null ? clienteDatos.getSemanasInactivo()   : 0;
+        int    meses      = clienteDatos.getMesesComoSocio()    != null ? clienteDatos.getMesesComoSocio()    : 0;
         double frecuencia = clienteDatos.getFrecuenciaSemanal() != null ? clienteDatos.getFrecuenciaSemanal() : 0.0;
 
-        if (meses > 12 && semanas >= 3)
-        {
+        if (meses > MESES_CONSOLIDADO && semanas >= SEMANAS_AUSENCIA)
             // G1: socio consolidado que ha dejado de venir — máxima prioridad de retención
-            grupo = "CONSOLIDADO_EN_RIESGO";
-        }
-        else if (meses <= 3 && frecuencia < 1.0)
-        {
-            // G2: socio nuevo sin enganche — foco en estrategias de bienvenida y fidelización
-            grupo = "NUEVO_SIN_ENGANCHE";
-        }
-        else if (frecuencia >= 2.0 && semanas == 0 && meses >= 4)
-        {
+            return GrupoRiesgo.CONSOLIDADO_EN_RIESGO;
+
+        if (meses <= MESES_NUEVO && frecuencia < FREC_MIN_ENGANCHE)
+            // G2: socio nuevo sin enganche — foco en bienvenida y fidelización
+            return GrupoRiesgo.NUEVO_SIN_ENGANCHE;
+
+        if (frecuencia >= FREC_MIN_ESTABLE && semanas == 0 && meses >= MESES_MIN_PATRON)
             // G3: mínimo 4 meses para considerar el patrón de asistencia como consolidado
-            grupo = "ACTIVO_ESTABLE";
-        }   
-        else
-            grupo = "IRREGULAR";
-        
-        return (grupo);
+            return GrupoRiesgo.ACTIVO_ESTABLE;
+
+        return GrupoRiesgo.IRREGULAR;
     }
 }

@@ -4,6 +4,7 @@ import com.juandelacierva.ChurnGym.dto.AnalisisResumenResponseDto;
 import com.juandelacierva.ChurnGym.dto.ClienteAnalisisResponseDto;
 import com.juandelacierva.ChurnGym.domain.ClienteDatos;
 import com.juandelacierva.ChurnGym.domain.ResultadoAnalisis;
+import com.juandelacierva.ChurnGym.domain.enums.GrupoRiesgo;
 import com.juandelacierva.ChurnGym.exception.ResourceNotFoundException;
 import com.juandelacierva.ChurnGym.mapper.AnalisisMapper;
 import com.juandelacierva.ChurnGym.repository.ClienteDatosRepository;
@@ -67,7 +68,7 @@ public class AnalisisServiceImpl implements AnalisisService
         LocalDateTime ahora = LocalDateTime.now();
 
         // llamada a sklearn KMeans clustering
-        Map<Long, String> grupos = clusteringClient.obtenerGrupos(clientes);
+        Map<Long, GrupoRiesgo> grupos = clusteringClient.obtenerGrupos(clientes);
 
         List<ResultadoAnalisis> resultados = clientes
                 .stream()
@@ -76,11 +77,8 @@ public class AnalisisServiceImpl implements AnalisisService
                     r.setClienteDatos(cliente);
                     r.setNivelRiesgo(motorRiesgoService.calcularNivel(cliente));
                     r.setProbabilidadAbandono(motorRiesgoService.calcularProbabilidad(cliente));
-                    
-                    String grupo = grupos.get(cliente.getId());
-                    if (grupo == null)
-                        grupo = motorRiesgoService.asignarGrupo(cliente);
 
+                    GrupoRiesgo grupo = grupos.getOrDefault(cliente.getId(), motorRiesgoService.asignarGrupo(cliente));
                     r.setGrupo(grupo);
                     r.setCalculadoEn(ahora);
 

@@ -1,6 +1,7 @@
 package com.juandelacierva.ChurnGym.service;
 
 import com.juandelacierva.ChurnGym.domain.ClienteDatos;
+import com.juandelacierva.ChurnGym.domain.enums.GrupoRiesgo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +36,7 @@ public class ClusteringClient
 	record ClusteringResponse(List<GrupoResultado> resultados) {
 	}
 
-	public Map<Long, String> obtenerGrupos(List<ClienteDatos> clientes) {
+	public Map<Long, GrupoRiesgo> obtenerGrupos(List<ClienteDatos> clientes) {
 		List<ClienteClusterRequest> payload = clientes
 				.stream()
 				.map(c -> new ClienteClusterRequest(
@@ -59,8 +60,8 @@ public class ClusteringClient
 			return (response.resultados()
 					.stream()
 					.collect(Collectors.toMap(
-							GrupoResultado::id, // clave: id del cliente
-							GrupoResultado::grupo // valor: grupo asignado por el clustering
+							GrupoResultado::id,
+							r -> GrupoRiesgo.valueOf(r.grupo())
 					)));
 
 		} catch (Exception e) 
