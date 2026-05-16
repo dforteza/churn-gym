@@ -3,8 +3,9 @@ package com.juandelacierva.ChurnGym.mapper;
 import com.juandelacierva.ChurnGym.dto.AnalisisResumenResponseDto;
 import com.juandelacierva.ChurnGym.dto.ClienteAnalisisResponseDto;
 import com.juandelacierva.ChurnGym.domain.ClientePrivado;
-import com.juandelacierva.ChurnGym.domain.NivelRiesgo;
 import com.juandelacierva.ChurnGym.domain.ResultadoAnalisis;
+import com.juandelacierva.ChurnGym.domain.enums.NivelRiesgo;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -32,7 +33,9 @@ public abstract class AnalisisMapper
 
     // METODO CUSTOM PARA MOSTRAR RESUMEN DE ANALISIS
     public AnalisisResumenResponseDto toAnalisisResumenResponse(
-            List<ResultadoAnalisis> resultados, LocalDateTime calculadoEn)
+        List<ResultadoAnalisis> resultados,
+        LocalDateTime calculadoEn
+    )
     {
         int alto  = 0;
         int medio = 0;

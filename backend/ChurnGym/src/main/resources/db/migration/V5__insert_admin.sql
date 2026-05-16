@@ -5,6 +5,6 @@ INSERT INTO usuarios (username, email, password, rol)
 VALUES (
     'admin',
     'admin@churngym.dev',
-    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+    '$2a$10$sjlCpieBIMUkj3ei42oFae4dO5ouRKAZgfUwMvfxH3H8nrhUWLNyC',
     'ADMIN'
 );

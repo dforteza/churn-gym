@@ -1,5 +1,7 @@
 package com.juandelacierva.ChurnGym.domain;
 
+import com.juandelacierva.ChurnGym.domain.enums.Rol;
+
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -8,8 +8,8 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
-public class ClientePrivado {
-
+public class ClientePrivado 
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +23,7 @@ public class ClientePrivado {
     @Column(unique = true, nullable = false)
     private String dni;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "gmail", unique = true, nullable = false)
     private String email;
 
     @OneToOne(mappedBy = "clientePrivado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

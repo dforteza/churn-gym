@@ -1,6 +1,7 @@
 package com.juandelacierva.ChurnGym.dto;
 
-import com.juandelacierva.ChurnGym.domain.Rol;
+import com.juandelacierva.ChurnGym.domain.enums.Rol;
+
 import lombok.*;
 
 @Getter @Setter

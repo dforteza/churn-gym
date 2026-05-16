@@ -14,46 +14,59 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ClusteringClient {
+public class ClusteringClient 
+{
+	private final RestTemplate restTemplate;
 
-    private final RestTemplate restTemplate;
+	@Value("${clustering.service.url}")
+	private String clusteringUrl;
 
-    @Value("${clustering.service.url}")
-    private String clusteringUrl;
+	record ClienteClusterRequest(
+			Long id,
+			double frecuenciaSemanal,
+			int semanasInactivo,
+			double tendenciaMensual,
+			int mesesComoSocio) {
+	}
 
-    record ClienteClusterRequest(
-            Long   id,
-            double frecuenciaSemanal,
-            int    semanasInactivo,
-            double tendenciaMensual,
-            int    mesesComoSocio) {}
+	record GrupoResultado(Long id, String grupo) {
+	}
 
-    record GrupoResultado(Long id, String grupo) {}
+	record ClusteringResponse(List<GrupoResultado> resultados) {
+	}
 
-    record ClusteringResponse(List<GrupoResultado> resultados) {}
+	public Map<Long, String> obtenerGrupos(List<ClienteDatos> clientes) {
+		List<ClienteClusterRequest> payload = clientes
+				.stream()
+				.map(c -> new ClienteClusterRequest(
+						c.getId(),
+						c.getFrecuenciaSemanal(),
+						c.getSemanasInactivo(),
+						c.getTendenciaMensual(),
+						c.getMesesComoSocio()))
+				.toList();
 
-    public Map<Long, String> obtenerGrupos(List<ClienteDatos> clientes) {
-        List<ClienteClusterRequest> payload = clientes.stream()
-                .map(c -> new ClienteClusterRequest(
-                        c.getId(),
-                        c.getFrecuenciaSemanal(),
-                        c.getSemanasInactivo(),
-                        c.getTendenciaMensual(),
-                        c.getMesesComoSocio()))
-                .toList();
+		try
+		{
+			ClusteringResponse response = restTemplate.postForObject(
+					clusteringUrl + "/cluster",
+					payload,
+					ClusteringResponse.class);
 
-        try {
-            ClusteringResponse response = restTemplate.postForObject(
-                    clusteringUrl + "/cluster", payload, ClusteringResponse.class);
+			if (response == null || response.resultados() == null)
+				return (Map.of());
 
-            if (response == null || response.resultados() == null) return Map.of();
+			return (response.resultados()
+					.stream()
+					.collect(Collectors.toMap(
+							GrupoResultado::id, // clave: id del cliente
+							GrupoResultado::grupo // valor: grupo asignado por el clustering
+					)));
 
-            return response.resultados().stream()
-                    .collect(Collectors.toMap(GrupoResultado::id, GrupoResultado::grupo));
-
-        } catch (Exception e) {
-            log.warn("Clustering service no disponible ({}). Usando fallback de reglas.", e.getMessage());
-            return Map.of();
-        }
-    }
+		} catch (Exception e) 
+		{
+			log.warn("Clustering service no disponible ({}). Usando fallback de reglas.", e.getMessage());
+			return (Map.of());
+		}
+	}
 }
