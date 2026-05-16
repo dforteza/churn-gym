@@ -8,9 +8,10 @@ import com.juandelacierva.ChurnGym.domain.enums.NivelRiesgo;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -31,28 +32,19 @@ public abstract class AnalisisMapper
     @Mapping(source = "privado.email",                             target = "email")
     public abstract ClienteAnalisisResponseDto toClienteAnalisisResponse(ResultadoAnalisis resultado, ClientePrivado privado);
 
-    // METODO CUSTOM PARA MOSTRAR RESUMEN DE ANALISIS
     public AnalisisResumenResponseDto toAnalisisResumenResponse(
-        List<ResultadoAnalisis> resultados,
+        List<ResultadoAnalisis> todos,
+        Page<ResultadoAnalisis> pagina,
         LocalDateTime calculadoEn
     )
     {
+        // Contadores globales — se calculan sobre TODOS los clientes, ignorando filtros
         int alto  = 0;
         int medio = 0;
-        int bajo = 0;
-        List<ClienteAnalisisResponseDto> items = new ArrayList<>();
+        int bajo  = 0;
 
-        // 1. PARA CADA RESULTADO, CONVERTIRLO A DTO Y CONTAR LOS NIVELES DE RIESGO
-        for (ResultadoAnalisis r : resultados) 
+        for (ResultadoAnalisis r : todos)
         {
-            // 1.1 OBTENER LOS DATOS PRIVADOS DEL CLIENTE PARA EL MAPEADO
-            // resultado -> clienteDatos -> clientePrivado (2 NIVELES DE RELACIÓN)
-            ClientePrivado privado = r.getClienteDatos().getClientePrivado();
-
-            // 1.2 RESULTADO + DATOS PRIVADOS -> CLIENTE ANALISIS RESPONSE
-            items.add(toClienteAnalisisResponse(r, privado));
-
-            // 1.3 CONTAR LOS NIVELES DE RIESGO
             if (r.getNivelRiesgo() == NivelRiesgo.ALTO)
                 alto++;
             else if (r.getNivelRiesgo() == NivelRiesgo.MEDIO)
@@ -61,7 +53,16 @@ public abstract class AnalisisMapper
                 bajo++;
         }
 
-        // 2. CREAR Y DEVOLVER ANALISIS RESUMEN RESPONSE
-        return (new AnalisisResumenResponseDto(calculadoEn, resultados.size(), alto, medio, bajo, items));
+        List<ClienteAnalisisResponseDto> items = pagina.getContent()
+                .stream()
+                .map(r -> toClienteAnalisisResponse(r, r.getClienteDatos().getClientePrivado()))
+                .toList();
+
+        Page<ClienteAnalisisResponseDto> paginaDto = new PageImpl<>(
+            items,
+            pagina.getPageable(),
+            pagina.getTotalElements());
+
+        return (new AnalisisResumenResponseDto(calculadoEn, todos.size(), alto, medio, bajo, paginaDto));
     }
 }

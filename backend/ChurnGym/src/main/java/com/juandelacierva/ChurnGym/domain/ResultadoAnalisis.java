@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import com.juandelacierva.ChurnGym.domain.enums.GrupoRiesgo;
 import com.juandelacierva.ChurnGym.domain.enums.NivelRiesgo;
 
 @Entity
@@ -28,8 +29,9 @@ public class ResultadoAnalisis
     @Column(nullable = false)
     private Double probabilidadAbandono;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String grupo;
+    private GrupoRiesgo grupo;
 
     @Column(nullable = false)
     private LocalDateTime calculadoEn;

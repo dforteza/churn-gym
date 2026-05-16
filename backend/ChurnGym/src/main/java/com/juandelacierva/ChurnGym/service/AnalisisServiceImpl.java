@@ -4,6 +4,10 @@ import com.juandelacierva.ChurnGym.dto.AnalisisResumenResponseDto;
 import com.juandelacierva.ChurnGym.dto.ClienteAnalisisResponseDto;
 import com.juandelacierva.ChurnGym.domain.ClienteDatos;
 import com.juandelacierva.ChurnGym.domain.ResultadoAnalisis;
+import com.juandelacierva.ChurnGym.domain.enums.DeportePrincipal;
+import com.juandelacierva.ChurnGym.domain.enums.FranjaHoraria;
+import com.juandelacierva.ChurnGym.domain.enums.GrupoRiesgo;
+import com.juandelacierva.ChurnGym.domain.enums.NivelRiesgo;
 import com.juandelacierva.ChurnGym.exception.ResourceNotFoundException;
 import com.juandelacierva.ChurnGym.mapper.AnalisisMapper;
 import com.juandelacierva.ChurnGym.repository.ClienteDatosRepository;
@@ -12,6 +16,10 @@ import com.juandelacierva.ChurnGym.service.interfaces.AnalisisService;
 import com.juandelacierva.ChurnGym.service.interfaces.MotorRiesgoService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,16 +40,21 @@ public class AnalisisServiceImpl implements AnalisisService
 
     @Override
     @Transactional(readOnly = true)
-    public AnalisisResumenResponseDto getAnalisisVigente() {
-        List<ResultadoAnalisis> resultados = resultadoAnalisisRepository.findAll();
+    public AnalisisResumenResponseDto getAnalisisVigente(
+            NivelRiesgo nivelRiesgo, GrupoRiesgo grupo,
+            FranjaHoraria franja, DeportePrincipal deporte,
+            Pageable pageable)
+    {
+        List<ResultadoAnalisis> todos = resultadoAnalisisRepository.findAll();
 
-        LocalDateTime calculadoEn = resultados.isEmpty()
+        Page<ResultadoAnalisis> pagina = resultadoAnalisisRepository
+                .findWithFilters(nivelRiesgo, grupo, franja, deporte, pageable);
+
+        LocalDateTime calculadoEn = todos.isEmpty()
                 ? LocalDateTime.now()
-                : resultados.get(0).getCalculadoEn();
+                : todos.get(0).getCalculadoEn();
 
-        AnalisisResumenResponseDto response = analisisMapper.toAnalisisResumenResponse(resultados, calculadoEn);
-
-        return (response);
+        return (analisisMapper.toAnalisisResumenResponse(todos, pagina, calculadoEn));
     }
 
     @Override
@@ -67,7 +80,7 @@ public class AnalisisServiceImpl implements AnalisisService
         LocalDateTime ahora = LocalDateTime.now();
 
         // llamada a sklearn KMeans clustering
-        Map<Long, String> grupos = clusteringClient.obtenerGrupos(clientes);
+        Map<Long, GrupoRiesgo> grupos = clusteringClient.obtenerGrupos(clientes);
 
         List<ResultadoAnalisis> resultados = clientes
                 .stream()
@@ -76,11 +89,8 @@ public class AnalisisServiceImpl implements AnalisisService
                     r.setClienteDatos(cliente);
                     r.setNivelRiesgo(motorRiesgoService.calcularNivel(cliente));
                     r.setProbabilidadAbandono(motorRiesgoService.calcularProbabilidad(cliente));
-                    
-                    String grupo = grupos.get(cliente.getId());
-                    if (grupo == null)
-                        grupo = motorRiesgoService.asignarGrupo(cliente);
 
+                    GrupoRiesgo grupo = grupos.getOrDefault(cliente.getId(), motorRiesgoService.asignarGrupo(cliente));
                     r.setGrupo(grupo);
                     r.setCalculadoEn(ahora);
 
@@ -90,9 +100,11 @@ public class AnalisisServiceImpl implements AnalisisService
 
         resultadoAnalisisRepository.saveAll(Objects.requireNonNull(resultados));
 
-        AnalisisResumenResponseDto response = analisisMapper.toAnalisisResumenResponse(resultados, ahora);
+        Pageable paginaPorDefecto = PageRequest.of(0, 10, Sort.by("probabilidadAbandono").descending());
+        Page<ResultadoAnalisis> pagina = resultadoAnalisisRepository
+                .findWithFilters(null, null, null, null, paginaPorDefecto);
 
-        return (response);
+        return (analisisMapper.toAnalisisResumenResponse(resultados, pagina, ahora));
     }
 
 }

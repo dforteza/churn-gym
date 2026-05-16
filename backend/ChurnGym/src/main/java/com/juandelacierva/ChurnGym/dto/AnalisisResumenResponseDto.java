@@ -1,12 +1,12 @@
 package com.juandelacierva.ChurnGym.dto;
 
 import lombok.*;
+import org.springframework.data.domain.Page;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class AnalisisResumenResponseDto 
+public class AnalisisResumenResponseDto
 {
     private LocalDateTime                       calculadoEn;
 
@@ -14,6 +14,6 @@ public class AnalisisResumenResponseDto
     private Integer                             alto;
     private Integer                             medio;
     private Integer                             bajo;
-    
-    private List<ClienteAnalisisResponseDto>    resultados;
+
+    private Page<ClienteAnalisisResponseDto>    resultados;
 }
