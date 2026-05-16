@@ -10,23 +10,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class MotorRiesgoServiceImpl implements MotorRiesgoService
 {
-    // ── Umbrales de clasificación (prob en [0.0, 1.0]) ────────────────────────
+    // == Umbrales de clasificación (prob en [0.0, 1.0]) ========================
     private static final double UMBRAL_ALTO  = 0.65;
     private static final double UMBRAL_MEDIO = 0.30;
 
-    // ── Pesos del modelo — calibrados con Nelder-Mead (calibrar_pesos.py) ─────
+    // == Pesos del modelo — calibrados con Nelder-Mead (calibrar_pesos.py) =====
     private static final double BIAS         = -1.95;
     private static final double W_SEMANAS    =  4.61;
     private static final double W_FRECUENCIA =  0.34;
     private static final double W_TENDENCIA  =  1.53;
     private static final double W_ANTIGUEDAD = -1.13;
 
-    // ── Límites de normalización al rango [0, 1] ──────────────────────────────
+    // == Límites de normalización al rango [0, 1] ==============================
     private static final double MAX_SEMANAS    = 12.0;
     private static final double MAX_FRECUENCIA =  7.0;
     private static final double MAX_MESES      = 60.0;
 
-    // ── Umbrales de reglas de segmentación de grupo ───────────────────────────
+    // == Umbrales de reglas de segmentación de grupo ===========================
     private static final int    MESES_CONSOLIDADO = 12;
     private static final int    SEMANAS_AUSENCIA  =  3;
     private static final int    MESES_NUEVO       =  3;
