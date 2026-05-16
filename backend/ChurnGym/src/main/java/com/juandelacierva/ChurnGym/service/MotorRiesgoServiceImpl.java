@@ -60,11 +60,11 @@ public class MotorRiesgoServiceImpl implements MotorRiesgoService
         double prob = calcularProbabilidad(clienteDatos);
 
         if (prob >= UMBRAL_ALTO)
-            return NivelRiesgo.ALTO;
+            return (NivelRiesgo.ALTO);
         else if (prob >= UMBRAL_MEDIO)
-            return NivelRiesgo.MEDIO;
+            return (NivelRiesgo.MEDIO);
         else
-            return NivelRiesgo.BAJO;
+            return (NivelRiesgo.BAJO);
     }
 
     @Override
@@ -76,16 +76,16 @@ public class MotorRiesgoServiceImpl implements MotorRiesgoService
 
         if (meses > MESES_CONSOLIDADO && semanas >= SEMANAS_AUSENCIA)
             // G1: socio consolidado que ha dejado de venir — máxima prioridad de retención
-            return GrupoRiesgo.CONSOLIDADO_EN_RIESGO;
+            return (GrupoRiesgo.CONSOLIDADO_EN_RIESGO);
 
         if (meses <= MESES_NUEVO && frecuencia < FREC_MIN_ENGANCHE)
             // G2: socio nuevo sin enganche — foco en bienvenida y fidelización
-            return GrupoRiesgo.NUEVO_SIN_ENGANCHE;
+            return (GrupoRiesgo.NUEVO_SIN_ENGANCHE);
 
         if (frecuencia >= FREC_MIN_ESTABLE && semanas == 0 && meses >= MESES_MIN_PATRON)
             // G3: mínimo 4 meses para considerar el patrón de asistencia como consolidado
-            return GrupoRiesgo.ACTIVO_ESTABLE;
+            return (GrupoRiesgo.ACTIVO_ESTABLE);
 
-        return GrupoRiesgo.IRREGULAR;
+        return (GrupoRiesgo.IRREGULAR);
     }
 }
