@@ -1,5 +1,6 @@
 package com.juandelacierva.ChurnGym.controller;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -40,7 +41,7 @@ public class AnalisisServiceController
             @RequestParam(required = false) GrupoRiesgo      grupo,
             @RequestParam(required = false) FranjaHoraria    franjaHoraria,
             @RequestParam(required = false) DeportePrincipal deportePrincipal,
-            @PageableDefault(size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT, direction = Sort.Direction.DESC) Pageable pageable)
+            @ParameterObject @PageableDefault(size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT, direction = Sort.Direction.DESC) Pageable pageable)
     {
         if (pageable.getPageSize() > MAX_PAGE_SIZE)
             pageable = PageRequest.of(pageable.getPageNumber(), MAX_PAGE_SIZE, pageable.getSort());
