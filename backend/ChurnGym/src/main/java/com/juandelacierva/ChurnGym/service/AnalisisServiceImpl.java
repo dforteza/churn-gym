@@ -16,6 +16,7 @@ import com.juandelacierva.ChurnGym.service.interfaces.AnalisisService;
 import com.juandelacierva.ChurnGym.service.interfaces.MotorRiesgoService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AnalisisServiceImpl implements AnalisisService 
@@ -59,7 +61,8 @@ public class AnalisisServiceImpl implements AnalisisService
 
     @Override
     @Transactional(readOnly = true)
-    public ClienteAnalisisResponseDto getDetalleCliente(Long clienteId) {
+    public ClienteAnalisisResponseDto getDetalleCliente(Long clienteId) 
+    {
         ResultadoAnalisis resultado = resultadoAnalisisRepository
                 .findByClienteDatosId(clienteId)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -73,7 +76,9 @@ public class AnalisisServiceImpl implements AnalisisService
 
     @Override
     @Transactional
-    public AnalisisResumenResponseDto lanzarAnalisis() {
+    public AnalisisResumenResponseDto lanzarAnalisis() 
+    {
+        log.info("Lanzando análisis de churn");
         resultadoAnalisisRepository.deleteAllInBatch();
 
         List<ClienteDatos> clientes = clienteDatosRepository.findAll();
@@ -99,6 +104,11 @@ public class AnalisisServiceImpl implements AnalisisService
                 .toList();
 
         resultadoAnalisisRepository.saveAll(Objects.requireNonNull(resultados));
+
+        long alto  = resultados.stream().filter(r -> r.getNivelRiesgo() == NivelRiesgo.ALTO).count();
+        long medio = resultados.stream().filter(r -> r.getNivelRiesgo() == NivelRiesgo.MEDIO).count();
+        long bajo  = resultados.stream().filter(r -> r.getNivelRiesgo() == NivelRiesgo.BAJO).count();
+        log.info("Analisis completado - {} clientes: {} ALTO / {} MEDIO / {} BAJO", resultados.size(), alto, medio, bajo);
 
         Pageable paginaPorDefecto = PageRequest.of(0, 10, Sort.by("probabilidadAbandono").descending());
         Page<ResultadoAnalisis> pagina = resultadoAnalisisRepository

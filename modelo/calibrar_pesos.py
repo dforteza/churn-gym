@@ -142,7 +142,7 @@ def main():
                "tendencia mala", "antigüedad"]
 
     print(f"  {'Peso':<20}  {'Actual':>8}  {'Nuevo':>8}")
-    print(f"  {'─'*20}  {'─'*8}  {'─'*8}")
+    print(f"  {'='*20}  {'='*8}  {'='*8}")
 
     pesos_a_cambiar = []
     for i, nombre in enumerate(nombres):
