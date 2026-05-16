@@ -47,7 +47,8 @@ public class AnalisisServiceController
 
         return (new ResponseEntity<>(
                 analisisService.getAnalisisVigente(nivelRiesgo, grupo, franjaHoraria, deportePrincipal, pageable),
-                HttpStatus.OK));
+                HttpStatus.OK)
+            );
     }
 
     @PostMapping("/lanzar")

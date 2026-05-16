@@ -10,7 +10,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,19 +45,23 @@ public abstract class AnalisisMapper
 
         for (ResultadoAnalisis r : todos)
         {
-            if      (r.getNivelRiesgo() == NivelRiesgo.ALTO)  alto++;
-            else if (r.getNivelRiesgo() == NivelRiesgo.MEDIO) medio++;
-            else if (r.getNivelRiesgo() == NivelRiesgo.BAJO)  bajo++;
+            if (r.getNivelRiesgo() == NivelRiesgo.ALTO)
+                alto++;
+            else if (r.getNivelRiesgo() == NivelRiesgo.MEDIO)
+                medio++;
+            else if (r.getNivelRiesgo() == NivelRiesgo.BAJO)
+                bajo++;
         }
 
-        // Página de resultados — solo los registros filtrados y paginados
         List<ClienteAnalisisResponseDto> items = pagina.getContent()
                 .stream()
                 .map(r -> toClienteAnalisisResponse(r, r.getClienteDatos().getClientePrivado()))
                 .toList();
 
-        Page<ClienteAnalisisResponseDto> paginaDto =
-                new PageImpl<>(items, pagina.getPageable(), pagina.getTotalElements());
+        Page<ClienteAnalisisResponseDto> paginaDto = new PageImpl<>(
+            items,
+            pagina.getPageable(),
+            pagina.getTotalElements());
 
         return (new AnalisisResumenResponseDto(calculadoEn, todos.size(), alto, medio, bajo, paginaDto));
     }
