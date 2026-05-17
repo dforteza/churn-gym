@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Churn Gym Detector | Login</title>
+  <link rel="stylesheet" href="./css/login.css">
+</head>
+<body>
+  <main class="login-shell">
+    <section class="login-card" aria-label="Formulario de acceso">
+      <h1 class="card-title">Churn Gym Detector</h1>
+
+      <form class="login-form" data-login-form novalidate>
+        <div class="field">
+          <label for="username">Usuario</label>
+          <input id="username" name="username" type="text" autocomplete="username" placeholder="admin" required>
+        </div>
+
+        <div class="field">
+          <label for="password">Contrasena</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="admin1234" required>
+        </div>
+
+        <button class="login-button" type="submit" data-submit-button>Entrar</button>
+        <p class="feedback" data-feedback data-state="idle" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="./js/login.js"></script>
+</body>
+</html>

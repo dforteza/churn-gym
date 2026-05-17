@@ -1,0 +1,631 @@
+{
+  "info": {
+    "name": "ChurnGym API - Local",
+    "_postman_id": "churngym-api-local-v2",
+    "description": "Colección completa ChurnGym API. Ejecutar en orden: Auth → Lanzar → resto.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{jwtToken}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST-Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Token presente', () => pm.expect(json.token).to.be.a('string').and.not.empty);",
+                  "if (json.token) pm.environment.set('jwtToken', json.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Autentica al usuario admin y guarda el JWT en jwtToken. Ejecutar siempre primero."
+          },
+          "response": []
+        },
+        {
+          "name": "POST-Login-CredencialesInvalidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"contraseña_incorrecta\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Credenciales incorrectas — debe devolver 401."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Análisis",
+      "item": [
+        {
+          "name": "Lanzar",
+          "item": [
+            {
+              "name": "POST-LanzarAnalisis",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "const json = pm.response.json();",
+                      "pm.test('Hay clientes analizados', () => pm.expect(json.totalClientes).to.be.above(0));",
+                      "if (json.resultados && json.resultados.content && json.resultados.content.length > 0) {",
+                      "    pm.environment.set('clienteId', json.resultados.content[0].clienteId);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/analisis/lanzar",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "analisis", "lanzar"]
+                },
+                "description": "Lanza el motor de riesgo sobre todos los clientes. Guarda el primer clienteId en el entorno."
+              },
+              "response": []
+            },
+            {
+              "name": "POST-RelanzarAnalisis",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/analisis/lanzar",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "analisis", "lanzar"]
+                },
+                "description": "Relanza el análisis — borra los resultados anteriores y recalcula. Verifica que calculadoEn se actualiza."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Vigente",
+          "item": [
+            {
+              "name": "GET-AnalisisVigente",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "const json = pm.response.json();",
+                      "pm.test('totalClientes es número', () => pm.expect(json.totalClientes).to.be.a('number'));",
+                      "pm.test('resultados tiene content', () => pm.expect(json.resultados.content).to.be.an('array'));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/analisis/vigente",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "analisis", "vigente"]
+                },
+                "description": "Sin filtros. Devuelve primera página (10 elementos) ordenada por probabilidadAbandono desc."
+              },
+              "response": []
+            },
+            {
+              "name": "Paginación",
+              "item": [
+                {
+                  "name": "GET-AnalisisVigente-Pagina2",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                          "const json = pm.response.json();",
+                          "pm.test('Página 1 (0-indexed)', () => pm.expect(json.resultados.number).to.equal(1));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?page=1&size=5",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [
+                        { "key": "page", "value": "1" },
+                        { "key": "size", "value": "5" }
+                      ]
+                    },
+                    "description": "Segunda página con 5 elementos por página."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-SizeMaximo",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                          "const json = pm.response.json();",
+                          "pm.test('Size clampeado a 100', () => pm.expect(json.resultados.size).to.equal(100));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?size=101",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [
+                        { "key": "size", "value": "101" }
+                      ]
+                    },
+                    "description": "size=101 supera el límite — el servidor lo clampea a 100."
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Filtros",
+              "item": [
+                {
+                  "name": "GET-AnalisisVigente-NivelAlto",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=ALTO",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [{ "key": "nivelRiesgo", "value": "ALTO" }]
+                    },
+                    "description": "Solo clientes con nivel ALTO. Los contadores globales no cambian."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-NivelMedio",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=MEDIO",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [{ "key": "nivelRiesgo", "value": "MEDIO" }]
+                    },
+                    "description": "Solo clientes con nivel MEDIO."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-NivelBajo",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=BAJO",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [{ "key": "nivelRiesgo", "value": "BAJO" }]
+                    },
+                    "description": "Solo clientes con nivel BAJO."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-GrupoConsolidado",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?grupo=CONSOLIDADO_EN_RIESGO",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [{ "key": "grupo", "value": "CONSOLIDADO_EN_RIESGO" }]
+                    },
+                    "description": "Socios consolidados con ausencia prolongada — máxima prioridad de retención."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-GrupoIrregular",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?grupo=IRREGULAR",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [{ "key": "grupo", "value": "IRREGULAR" }]
+                    },
+                    "description": "Socios con patrón no clasificable en los otros grupos."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-FranjaManana",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?franjaHoraria=MANANA",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [{ "key": "franjaHoraria", "value": "MANANA" }]
+                    },
+                    "description": "Socios con franja horaria de mañana."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-DeporteCardio",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?deportePrincipal=CARDIO",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [{ "key": "deportePrincipal", "value": "CARDIO" }]
+                    },
+                    "description": "Socios cuyo deporte principal es cardio."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-AltoManana",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=ALTO&franjaHoraria=MANANA",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [
+                        { "key": "nivelRiesgo", "value": "ALTO" },
+                        { "key": "franjaHoraria", "value": "MANANA" }
+                      ]
+                    },
+                    "description": "Combinación: riesgo ALTO + franja mañana."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-AltoConsolidado",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=ALTO&grupo=CONSOLIDADO_EN_RIESGO",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [
+                        { "key": "nivelRiesgo", "value": "ALTO" },
+                        { "key": "grupo", "value": "CONSOLIDADO_EN_RIESGO" }
+                      ]
+                    },
+                    "description": "Combinación: riesgo ALTO + grupo consolidado."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-TodosFiltros",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=ALTO&grupo=CONSOLIDADO_EN_RIESGO&franjaHoraria=MANANA&deportePrincipal=CARDIO",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [
+                        { "key": "nivelRiesgo", "value": "ALTO" },
+                        { "key": "grupo", "value": "CONSOLIDADO_EN_RIESGO" },
+                        { "key": "franjaHoraria", "value": "MANANA" },
+                        { "key": "deportePrincipal", "value": "CARDIO" }
+                      ]
+                    },
+                    "description": "Los 4 filtros activos a la vez. Puede devolver content vacío según el seed."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET-AnalisisVigente-OrdenAscendente",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/analisis/vigente?sort=probabilidadAbandono,asc",
+                      "host": ["{{baseUrl}}"],
+                      "path": ["api", "analisis", "vigente"],
+                      "query": [{ "key": "sort", "value": "probabilidadAbandono,asc" }]
+                    },
+                    "description": "Ordenación ascendente — el primero es el de menor riesgo."
+                  },
+                  "response": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Detalle",
+          "item": [
+            {
+              "name": "GET-DetalleCliente",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "const json = pm.response.json();",
+                      "pm.test('clienteId correcto', () => pm.expect(json.clienteId).to.equal(parseInt(pm.environment.get('clienteId'))));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/analisis/cliente/{{clienteId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "analisis", "cliente", "{{clienteId}}"]
+                },
+                "description": "Detalle de un cliente concreto. clienteId se rellena automáticamente tras POST-LanzarAnalisis."
+              },
+              "response": []
+            },
+            {
+              "name": "GET-DetalleCliente-NoExiste",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 404', () => pm.response.to.have.status(404));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/analisis/cliente/999999",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "analisis", "cliente", "999999"]
+                },
+                "description": "ID inexistente — debe devolver 404."
+              },
+              "response": []
+            },
+            {
+              "name": "GET-DetalleCliente-SinToken",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/analisis/cliente/{{clienteId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "analisis", "cliente", "{{clienteId}}"]
+                },
+                "description": "Sin token JWT — debe devolver 401."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
