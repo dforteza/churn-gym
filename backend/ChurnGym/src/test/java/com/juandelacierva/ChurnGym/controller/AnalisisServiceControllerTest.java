@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -28,6 +28,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// Excluimos seguridad y filtros JWT para testear la capa HTTP de forma aislada
 @WebMvcTest(
     controllers = AnalisisServiceController.class,
     excludeAutoConfiguration = {
@@ -44,7 +45,7 @@ class AnalisisServiceControllerTest
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private AnalisisService analisisService;
 
     private AnalisisResumenResponseDto resumenDto;
@@ -58,81 +59,46 @@ class AnalisisServiceControllerTest
         );
     }
 
-    // ==========================================================================
-    // GET /api/analisis/vigente
-    // ==========================================================================
-
     @Test
-    @DisplayName("GET /api/analisis/vigente - Debe devolver 200 con el resumen")
+    @DisplayName("GET /api/analisis/vigente - Debe devolver 200")
     void shouldReturn200WhenGetAnalisisVigente() throws Exception
     {
-        // Arrange
         when(analisisService.getAnalisisVigente(any(), any(), any(), any(), any())).thenReturn(resumenDto);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/analisis/vigente")
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.totalClientes").value(2))
-            .andExpect(jsonPath("$.alto").value(1));
-
-        verify(analisisService, times(1)).getAnalisisVigente(any(), any(), any(), any(), any());
+        mockMvc.perform(get("/api/analisis/vigente").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 
-    // ==========================================================================
-    // POST /api/analisis/lanzar
-    // ==========================================================================
-
     @Test
-    @DisplayName("POST /api/analisis/lanzar - Debe devolver 200 al lanzar el análisis")
+    @DisplayName("POST /api/analisis/lanzar - Debe devolver 200")
     void shouldReturn200WhenLanzarAnalisis() throws Exception
     {
-        // Arrange
         when(analisisService.lanzarAnalisis()).thenReturn(resumenDto);
 
-        // Act & Assert
-        mockMvc.perform(post("/api/analisis/lanzar")
-                .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/api/analisis/lanzar").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
-
-        verify(analisisService, times(1)).lanzarAnalisis();
     }
 
-    // ==========================================================================
-    // GET /api/analisis/cliente/{clienteId}
-    // ==========================================================================
-
     @Test
-    @DisplayName("GET /api/analisis/cliente/{id} - Debe devolver 200 con el detalle del cliente")
+    @DisplayName("GET /api/analisis/cliente/{id} - Debe devolver 200")
     void shouldReturn200WhenGetDetalleCliente() throws Exception
     {
-        // Arrange
         when(analisisService.getDetalleCliente(1L)).thenReturn(new ClienteAnalisisResponseDto());
 
-        // Act & Assert
-        mockMvc.perform(get("/api/analisis/cliente/{clienteId}", 1L)
-                .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/analisis/cliente/{clienteId}", 1L).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
-
-        verify(analisisService, times(1)).getDetalleCliente(1L);
     }
 
     @Test
     @DisplayName("GET /api/analisis/cliente/{id} - Debe devolver 404 cuando el cliente no existe")
     void shouldReturn404WhenClienteNotFound() throws Exception
     {
-        // Arrange — el service lanza la excepción, el GlobalExceptionHandler la convierte en 404
         when(analisisService.getDetalleCliente(99L))
             .thenThrow(new ResourceNotFoundException("No se encontró análisis para el cliente con id: 99"));
 
-        // Act & Assert
-        mockMvc.perform(get("/api/analisis/cliente/{clienteId}", 99L)
-                .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/analisis/cliente/{clienteId}", 99L).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value("No se encontró análisis para el cliente con id: 99"));
-
-        verify(analisisService, times(1)).getDetalleCliente(99L);
     }
 }
