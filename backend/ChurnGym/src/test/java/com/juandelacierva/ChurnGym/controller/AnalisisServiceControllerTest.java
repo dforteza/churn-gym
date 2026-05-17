@@ -65,7 +65,8 @@ class AnalisisServiceControllerTest
     {
         when(analisisService.getAnalisisVigente(any(), any(), any(), any(), any())).thenReturn(resumenDto);
 
-        mockMvc.perform(get("/api/analisis/vigente").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/analisis/vigente")
+                .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     }
 
@@ -75,7 +76,8 @@ class AnalisisServiceControllerTest
     {
         when(analisisService.lanzarAnalisis()).thenReturn(resumenDto);
 
-        mockMvc.perform(post("/api/analisis/lanzar").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/api/analisis/lanzar")
+                .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     }
 
@@ -83,9 +85,11 @@ class AnalisisServiceControllerTest
     @DisplayName("GET /api/analisis/cliente/{id} - Debe devolver 200")
     void shouldReturn200WhenGetDetalleCliente() throws Exception
     {
-        when(analisisService.getDetalleCliente(1L)).thenReturn(new ClienteAnalisisResponseDto());
+        when(analisisService.getDetalleCliente(1L))
+            .thenReturn(new ClienteAnalisisResponseDto());
 
-        mockMvc.perform(get("/api/analisis/cliente/{clienteId}", 1L).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/analisis/cliente/{clienteId}", 1L)
+                .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     }
 
@@ -96,7 +100,8 @@ class AnalisisServiceControllerTest
         when(analisisService.getDetalleCliente(99L))
             .thenThrow(new ResourceNotFoundException("No se encontró análisis para el cliente con id: 99"));
 
-        mockMvc.perform(get("/api/analisis/cliente/{clienteId}", 99L).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/analisis/cliente/{clienteId}", 99L)
+                .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value("No se encontró análisis para el cliente con id: 99"));

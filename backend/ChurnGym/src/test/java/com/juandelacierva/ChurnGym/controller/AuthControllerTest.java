@@ -28,12 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(
     controllers = AuthController.class,
     excludeAutoConfiguration = {
-        SecurityAutoConfiguration.class,
-        UserDetailsServiceAutoConfiguration.class
+        SecurityAutoConfiguration.class,            // seguridad de Spring Boot
+        UserDetailsServiceAutoConfiguration.class   // servicio de usuarios de Spring Security
     },
     excludeFilters = @ComponentScan.Filter(
         type = FilterType.ASSIGNABLE_TYPE,
-        classes = {JwtAuthenticationFilter.class, JwtGenerator.class}
+        classes = {JwtAuthenticationFilter.class, JwtGenerator.class}   // filtros de autenticación y generación de JWT
     )
 )
 class AuthControllerTest
