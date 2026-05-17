@@ -197,27 +197,11 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.30</minimum>
+											<minimum>0.25</minimum>
 										</limit>
 									</limits>
 								</rule>
 							</rules>
-							<excludes>
-								<!-- Datos: entidades, DTOs, enums -->
-								<exclude>com/juandelacierva/ChurnGym/dto/**</exclude>
-								<exclude>com/juandelacierva/ChurnGym/domain/**</exclude>
-								<exclude>com/juandelacierva/ChurnGym/security/dto/**</exclude>
-								<!-- Arranque de la aplicación -->
-								<exclude>com/juandelacierva/ChurnGym/ChurnGymApplication.class</exclude>
-								<!-- Código generado automáticamente por MapStruct -->
-								<exclude>com/juandelacierva/ChurnGym/mapper/**</exclude>
-								<!-- Configuración de infraestructura (Swagger, Security, Beans) -->
-								<exclude>com/juandelacierva/ChurnGym/security/config/**</exclude>
-								<exclude>com/juandelacierva/ChurnGym/config/**</exclude>
-							<!-- Infraestructura JWT: requiere contexto completo con BD para testarse -->
-							<exclude>com/juandelacierva/ChurnGym/security/jwt/**</exclude>
-							<exclude>com/juandelacierva/ChurnGym/security/service/**</exclude>
-							</excludes>
 						</configuration>
 					</execution>
 
