@@ -214,6 +214,9 @@
 								<!-- Configuración de infraestructura (Swagger, Security, Beans) -->
 								<exclude>com/juandelacierva/ChurnGym/security/config/**</exclude>
 								<exclude>com/juandelacierva/ChurnGym/config/**</exclude>
+							<!-- Infraestructura JWT: requiere contexto completo con BD para testarse -->
+							<exclude>com/juandelacierva/ChurnGym/security/jwt/**</exclude>
+							<exclude>com/juandelacierva/ChurnGym/security/service/**</exclude>
 							</excludes>
 						</configuration>
 					</execution>
