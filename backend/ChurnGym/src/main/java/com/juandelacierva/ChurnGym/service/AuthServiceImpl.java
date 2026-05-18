@@ -15,10 +15,12 @@ import com.juandelacierva.ChurnGym.security.jwt.JwtGenerator;
 import com.juandelacierva.ChurnGym.service.interfaces.AuthService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService 
+public class AuthServiceImpl implements AuthService
 {
     private final AuthenticationManager authenticationManager;
     private final JwtGenerator          jwtGenerator;
@@ -42,9 +44,11 @@ public class AuthServiceImpl implements AuthService
                 .findByUsername(request.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
+        log.info("Login exitoso — usuario: {} [{}]", usuario.getUsername(), usuario.getRol());
+
         return (new LoginResponseDto(
                         token,
-                        usuario.getUsername(), 
+                        usuario.getUsername(),
                         usuario.getRol().name()
                     ));
     }
