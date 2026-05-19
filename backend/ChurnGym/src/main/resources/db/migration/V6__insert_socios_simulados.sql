@@ -1,4 +1,4 @@
--- V7__insert_socios_simulados.sql
+-- V6__insert_socios_simulados.sql
 -- =============================================================================
 -- 200 socios con distribución realista por grupo de riesgo (Opción A).
 -- Organizado en 7 secciones, una por grupo. El primer registro de cada sección
