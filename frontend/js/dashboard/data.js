@@ -13,12 +13,13 @@ function extractRows(resultados) {
   return [];
 }
 
-// Filtra los clientes por nivel de riesgo y por el texto introducido en el buscador.
-function getFilteredRows(rows, { risk, query }) {
+// Filtra los clientes por el texto del buscador. Los demás filtros los gestiona el backend.
+function getFilteredRows(rows, { query }) {
   const normalizedQuery = query.trim().toLowerCase();
 
+  if (!normalizedQuery) return rows;
+
   return rows.filter((cliente) => {
-    const matchesRisk = risk === 'TODOS' || cliente.nivelRiesgo === risk;
     const searchable = [
       cliente.nombre,
       cliente.apellidos,
@@ -29,8 +30,21 @@ function getFilteredRows(rows, { risk, query }) {
       formatEnum(cliente.franjaHoraria),
     ].join(' ').toLowerCase();
 
-    return matchesRisk && searchable.includes(normalizedQuery);
+    return searchable.includes(normalizedQuery);
   });
+}
+
+// Extrae la información de paginación del objeto Page devuelto por Spring.
+function extractPagination(resultados) {
+  if (resultados && typeof resultados === 'object' && !Array.isArray(resultados)) {
+    return {
+      totalPages:    resultados.totalPages    ?? 1,
+      totalElements: resultados.totalElements ?? 0,
+      number:        resultados.number        ?? 0,
+    };
+  }
+
+  return { totalPages: 1, totalElements: 0, number: 0 };
 }
 
 // Devuelve únicamente los clientes que han sido seleccionados en la tabla.
@@ -45,6 +59,7 @@ function countByRisk(rows, risk) {
 
 export {
   countByRisk,
+  extractPagination,
   extractRows,
   getFilteredRows,
   getSelectedRows,
