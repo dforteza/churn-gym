@@ -1,7 +1,7 @@
 // config.js
 
 // Indica si la aplicación utiliza datos simulados o el backend real.
-const MOCK_MODE = true;
+const MOCK_MODE = false;
 
 // URL base de la API. Se usa el hostname actual para que funcione correctamente
 // tanto en local como en entornos con Docker o despliegues en red.
@@ -42,6 +42,13 @@ function getAnalisisClienteEndpoint(clientId) {
   return MOCK_MODE
     ? `${MOCK_BASE}mock-cliente.json`
     : `${API_BASE}/analisis/cliente/${clientId}`;
+}
+
+async function apiLogin(username, password) {
+  return apiFetch(getLoginEndpoint(), {
+    method: 'POST',
+    body: JSON.stringify({ username, password }),
+  });
 }
 
 // Realiza peticiones HTTP al backend aplicando configuración común:
@@ -106,6 +113,7 @@ export {
   APP_ROUTES,
   MOCK_MODE,
   apiFetch,
+  apiLogin,
   getAnalisisClienteEndpoint,
   getAnalisisEndpoint,
   getAnalisisLanzarEndpoint,

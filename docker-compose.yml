@@ -33,7 +33,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-churnadmin}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
-      JWT_SECRET: ${JWT_SECRET:-changeme_secret_key_for_churngym_must_be_64_chars_long!!}
+      JWT_SECRET: ${JWT_SECRET:-changeme_secret_key_for_churngym_must_be_64_chars_long_exactly!!}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
       CLUSTERING_SERVICE_URL: ${CLUSTERING_SERVICE_URL:-http://localhost:5000}
     ports:
