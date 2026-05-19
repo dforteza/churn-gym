@@ -4,14 +4,17 @@ import { clearSession, getSession, redirectToLogin, requireAuth } from '../auth.
 import { prepareCampaignForClients } from '../services/campaign-service.js';
 import { exportClientsToExcel } from '../services/export-service.js';
 import { getDashboardElements } from '../dashboard/elements.js';
-import { countByRisk, extractRows, getFilteredRows, getSelectedRows } from '../dashboard/data.js';
-import { renderEmpty, renderRiskChart, renderRows, syncSelectionUi } from '../dashboard/render.js';
+import { countByRisk, extractPagination, extractRows, getFilteredRows, getSelectedRows } from '../dashboard/data.js';
+import { renderEmpty, renderPagination, renderRiskChart, renderRows, syncSelectionUi } from '../dashboard/render.js';
 
-// Estado principal del dashboard: análisis cargado, filas disponibles y selección actual.
+// Estado principal del dashboard: análisis cargado, filas disponibles, selección y paginación.
 const state = {
   analisis: null,
   rows: [],
   selectedIds: new Set(),
+  page: 0,
+  totalPages: 1,
+  totalElements: 0,
 };
 
 // Referencias a los elementos del DOM utilizados por la vista.
@@ -28,13 +31,24 @@ function initDashboard() {
   elements.userLabel.textContent = session?.username || 'Usuario';
 
   elements.logout.addEventListener('click', handleLogout);
-  elements.riskFilter.addEventListener('change', refreshTable);
+
+  // Filtros de backend: cada cambio lanza una nueva petición desde la página 0.
+  elements.riskFilter.addEventListener('change',   () => loadDashboard());
+  elements.grupoFilter.addEventListener('change',  () => loadDashboard());
+  elements.franjaFilter.addEventListener('change', () => loadDashboard());
+  elements.deporteFilter.addEventListener('change', () => loadDashboard());
+
+  // Búsqueda de texto: filtrado en memoria sobre los resultados de la página actual.
   elements.search.addEventListener('input', refreshTable);
+
   elements.tableBody.addEventListener('click', handleTableClick);
   elements.tableBody.addEventListener('change', handleTableSelection);
   elements.selectAll.addEventListener('change', handleSelectAllVisible);
   elements.sendCampaign.addEventListener('click', handleSendCampaign);
   elements.exportSelected.addEventListener('click', handleExportSelected);
+
+  elements.prevPage.addEventListener('click', () => loadDashboard({ page: state.page - 1 }));
+  elements.nextPage.addEventListener('click', () => loadDashboard({ page: state.page + 1 }));
 
   elements.refresh.addEventListener('click', async () => {
     await loadDashboard({ relaunch: true });
@@ -44,18 +58,29 @@ function initDashboard() {
 }
 
 // Carga el análisis desde la API y actualiza el estado visual del dashboard.
-async function loadDashboard({ relaunch = false } = {}) {
+async function loadDashboard({ relaunch = false, page = 0 } = {}) {
   setFeedback('');
   elements.refresh.disabled = true;
   elements.refresh.textContent = relaunch ? 'Actualizando...' : 'Cargando...';
+  state.page = page;
 
   try {
-    const analisis = relaunch ? await apiLanzarAnalisis() : await apiGetAnalisis();
+    const filters = getActiveFilters();
+
+    if (relaunch) {
+      await apiLanzarAnalisis();
+    }
+
+    const analisis = await apiGetAnalisis({ ...filters, page });
 
     state.analisis = analisis;
     state.rows = extractRows(analisis.resultados);
 
-    // Mantiene seleccionados únicamente los clientes que siguen existiendo tras recargar datos.
+    const pagination = extractPagination(analisis.resultados);
+    state.totalPages    = pagination.totalPages;
+    state.totalElements = pagination.totalElements;
+
+    // Mantiene seleccionados únicamente los clientes que siguen en la página actual.
     state.selectedIds = new Set(
       [...state.selectedIds].filter((id) => state.rows.some((row) => String(row.clienteId) === String(id))),
     );
@@ -65,22 +90,24 @@ async function loadDashboard({ relaunch = false } = {}) {
   } catch (error) {
     resetDashboardState();
     setFeedback(error.message || 'No se han podido cargar los datos.');
-    elements.resultCount.textContent = '0 resultados visibles';
+    elements.resultCount.textContent = '0 resultados';
     syncSelectionUi(elements, [], state.selectedIds, 0);
     renderEmpty(elements, 'No se han podido cargar los datos.');
+    renderPagination(elements, 0, 1);
   } finally {
     elements.refresh.disabled = false;
     elements.refresh.textContent = 'Actualizar análisis';
   }
 }
 
-// Aplica los filtros actuales y vuelve a renderizar la tabla.
+// Aplica la búsqueda de texto y vuelve a renderizar la tabla y la paginación.
 function refreshTable() {
   const visibleRows = getVisibleRows();
   const selectedRows = getCurrentSelectedRows();
 
-  elements.resultCount.textContent = `${visibleRows.length} resultados visibles`;
+  elements.resultCount.textContent = `${state.totalElements} resultados · Página ${state.page + 1} de ${Math.max(state.totalPages, 1)}`;
   renderRows(elements, visibleRows, state.selectedIds, APP_ROUTES.clientDetail);
+  renderPagination(elements, state.page, state.totalPages);
   syncSelectionUi(elements, visibleRows, state.selectedIds, selectedRows.length);
 }
 
@@ -173,12 +200,19 @@ function handleExportSelected() {
   }
 }
 
-// Devuelve las filas visibles tras aplicar el filtro de riesgo y el buscador.
+// Devuelve los valores activos de los filtros de backend.
+function getActiveFilters() {
+  return {
+    nivelRiesgo:     elements.riskFilter.value   || undefined,
+    grupo:           elements.grupoFilter.value  || undefined,
+    franjaHoraria:   elements.franjaFilter.value || undefined,
+    deportePrincipal: elements.deporteFilter.value || undefined,
+  };
+}
+
+// Devuelve las filas visibles aplicando solo la búsqueda de texto (filtros de backend ya aplicados).
 function getVisibleRows() {
-  return getFilteredRows(state.rows, {
-    risk: elements.riskFilter.value,
-    query: elements.search.value,
-  });
+  return getFilteredRows(state.rows, { query: elements.search.value });
 }
 
 // Obtiene los clientes seleccionados a partir del estado global de selección.
@@ -191,6 +225,9 @@ function resetDashboardState() {
   state.analisis = null;
   state.rows = [];
   state.selectedIds.clear();
+  state.page = 0;
+  state.totalPages = 1;
+  state.totalElements = 0;
 }
 
 // Muestra mensajes informativos o de error en la pantalla.

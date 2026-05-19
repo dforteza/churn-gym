@@ -58,9 +58,12 @@ function getGroupLabel(value, { titleCase = false } = {}) {
 
   const labels = {
     CONSOLIDADO_EN_RIESGO: 'socio consolidado en riesgo',
-    NUEVO_SIN_ENGANCHE: 'socio nuevo que no engancha',
-    ACTIVO_ESTABLE: 'socio activo estable',
-    IRREGULAR: 'socio irregular',
+    VETERANO_EN_PAUSA:     'socio veterano en pausa',
+    VETERANO_ESPORADICO:   'socio veterano esporádico',
+    NUEVO_SIN_ENGANCHE:    'socio nuevo que no engancha',
+    NUEVO_ENGANCHADO:      'socio nuevo enganchado',
+    ACTIVO_ESTABLE:        'socio activo estable',
+    IRREGULAR:             'socio irregular',
   };
 
   const normalizedValue = labels[String(value)] || String(value).toLowerCase();

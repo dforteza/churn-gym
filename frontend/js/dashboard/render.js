@@ -100,8 +100,16 @@ function syncSelectionUi(elements, rows, selectedIds, selectedRowsCount) {
   elements.selectAll.indeterminate = selectedVisibleCount > 0 && selectedVisibleCount < rows.length;
 }
 
+// Actualiza los controles de paginación según la página actual y el total de páginas.
+function renderPagination(elements, page, totalPages) {
+  elements.prevPage.disabled = page === 0;
+  elements.nextPage.disabled = page >= totalPages - 1;
+  elements.pageInfo.textContent = `Página ${page + 1} de ${Math.max(totalPages, 1)}`;
+}
+
 export {
   renderEmpty,
+  renderPagination,
   renderRiskChart,
   renderRows,
   syncSelectionUi,

@@ -9,7 +9,6 @@
 <body>
   <header class="topbar">
     <div>
-      <p class="eyebrow">Panel</p>
       <h1>Churn Gym Detector</h1>
     </div>
     <div class="session">
@@ -21,18 +20,54 @@
   <main class="dashboard">
     <section class="toolbar" aria-label="Controles del dashboard">
       <div class="control">
-        <label for="riskFilter">Filtrar por riesgo</label>
+        <label for="riskFilter">Riesgo</label>
         <select id="riskFilter" data-risk-filter>
-          <option value="TODOS">Todos</option>
+          <option value="">Todos</option>
           <option value="ALTO">Alto</option>
           <option value="MEDIO">Medio</option>
           <option value="BAJO">Bajo</option>
         </select>
       </div>
 
+      <div class="control">
+        <label for="grupoFilter">Grupo</label>
+        <select id="grupoFilter" data-grupo-filter>
+          <option value="">Todos</option>
+          <option value="CONSOLIDADO_EN_RIESGO">Consolidado en riesgo</option>
+          <option value="VETERANO_EN_PAUSA">Veterano en pausa</option>
+          <option value="VETERANO_ESPORADICO">Veterano esporádico</option>
+          <option value="NUEVO_SIN_ENGANCHE">Nuevo sin enganche</option>
+          <option value="NUEVO_ENGANCHADO">Nuevo enganchado</option>
+          <option value="ACTIVO_ESTABLE">Activo estable</option>
+          <option value="IRREGULAR">Irregular</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label for="franjaFilter">Franja horaria</label>
+        <select id="franjaFilter" data-franja-filter>
+          <option value="">Todas</option>
+          <option value="MANANA">Mañana</option>
+          <option value="TARDE">Tarde</option>
+          <option value="NOCHE">Noche</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label for="deporteFilter">Deporte</label>
+        <select id="deporteFilter" data-deporte-filter>
+          <option value="">Todos</option>
+          <option value="MUSCULACION">Musculación</option>
+          <option value="CARDIO">Cardio</option>
+          <option value="CROSSFIT">CrossFit</option>
+          <option value="CLASES_COLECTIVAS">Clases colectivas</option>
+          <option value="MIXTO">Mixto</option>
+        </select>
+      </div>
+
       <div class="control search-control">
         <label for="searchInput">Buscar cliente</label>
-        <input id="searchInput" type="search" placeholder="Nombre, correo electrónico o grupo" data-search>
+        <input id="searchInput" type="search" placeholder="Nombre, correo o grupo" data-search>
       </div>
 
       <button class="primary-button" type="button" data-refresh>Actualizar análisis</button>
@@ -63,7 +98,7 @@
         </div>
 
         <div class="table-wrap">
-          <table>
+          <table data-table>
             <thead>
               <tr>
                 <th>
@@ -83,6 +118,12 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <div class="pagination">
+          <button class="ghost-button" type="button" data-prev-page disabled>← Anterior</button>
+          <span data-page-info>Página 1 de 1</span>
+          <button class="ghost-button" type="button" data-next-page disabled>Siguiente →</button>
         </div>
       </article>
 

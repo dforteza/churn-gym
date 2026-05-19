@@ -6,17 +6,23 @@ import {
   getAnalisisLanzarEndpoint,
 } from '../config.js';
 
+const PAGE_SIZE = 20;
+
 // Recupera el análisis general que se muestra en el dashboard.
-function apiGetAnalisis() {
+function apiGetAnalisis({ nivelRiesgo, grupo, franjaHoraria, deportePrincipal, page = 0 } = {}) {
   if (MOCK_MODE) {
     return apiFetch(getAnalisisEndpoint());
   }
 
   const url = new URL(getAnalisisEndpoint());
 
-  // Se solicitan todos los clientes en una única petición para que los filtros
-  // y las selecciones del dashboard no se vean afectados por la paginación.
-  url.searchParams.set('size', '1000');
+  if (nivelRiesgo)     url.searchParams.set('nivelRiesgo',     nivelRiesgo);
+  if (grupo)           url.searchParams.set('grupo',           grupo);
+  if (franjaHoraria)   url.searchParams.set('franjaHoraria',   franjaHoraria);
+  if (deportePrincipal) url.searchParams.set('deportePrincipal', deportePrincipal);
+
+  url.searchParams.set('page', page);
+  url.searchParams.set('size', PAGE_SIZE);
   url.searchParams.set('sort', 'probabilidadAbandono,desc');
 
   return apiFetch(url);
