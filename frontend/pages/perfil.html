@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Churn Gym Detector | Mi perfil</title>
+  <link rel="stylesheet" href="../css/perfil.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Mi perfil</p>
+      <h1>Churn Gym Detector</h1>
+    </div>
+    <div class="session">
+      <span data-user-label>Usuario</span>
+      <button class="ghost-button" type="button" data-back>Volver al dashboard</button>
+      <button class="ghost-button" type="button" data-logout>Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="perfil-page">
+
+    <section class="gym-hero" aria-label="Identidad del gimnasio">
+      <div>
+        <p class="eyebrow">Gimnasio</p>
+        <h2 data-gym-name>Cargando…</h2>
+        <p class="hero-meta" data-gym-dir1>—</p>
+        <p class="hero-meta" data-gym-dir2>—</p>
+      </div>
+      <button class="primary-button" type="button" data-edit-toggle>Editar perfil</button>
+    </section>
+
+    <section class="perfil-grid">
+
+      <article class="panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Datos del gimnasio</h2>
+            <p>Información de contacto y localización.</p>
+          </div>
+        </div>
+        <dl class="detail-list">
+          <div>
+            <dt>Nombre</dt>
+            <dd data-gym-name>—</dd>
+          </div>
+          <div>
+            <dt>Dirección</dt>
+            <dd data-gym-dir1>—</dd>
+          </div>
+          <div>
+            <dt>Ciudad / CP</dt>
+            <dd data-gym-dir2>—</dd>
+          </div>
+          <div>
+            <dt>Teléfono</dt>
+            <dd data-gym-tel>—</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Cuenta</h2>
+            <p>Datos de acceso al sistema.</p>
+          </div>
+        </div>
+        <dl class="detail-list">
+          <div>
+            <dt>Usuario</dt>
+            <dd data-gym-username>—</dd>
+          </div>
+          <div>
+            <dt>Correo</dt>
+            <dd data-gym-email>—</dd>
+          </div>
+          <div>
+            <dt>Miembro desde</dt>
+            <dd data-gym-since>—</dd>
+          </div>
+        </dl>
+      </article>
+
+    </section>
+
+    <section class="panel edit-panel" aria-label="Formulario de edición" hidden data-edit-form>
+      <div class="panel-heading">
+        <div>
+          <h2>Editar perfil</h2>
+          <p>Los campos vacíos mantienen el valor actual.</p>
+        </div>
+      </div>
+
+      <form class="edit-form" novalidate>
+        <div class="form-row">
+          <label for="inputName">Nombre del gimnasio</label>
+          <input id="inputName" type="text" placeholder="Churn Gym Madrid Centro" data-input-name>
+        </div>
+        <div class="form-row">
+          <label for="inputDir1">Dirección</label>
+          <input id="inputDir1" type="text" placeholder="Calle Gran Vía, 45" data-input-dir1>
+        </div>
+        <div class="form-row">
+          <label for="inputDir2">Ciudad / CP</label>
+          <input id="inputDir2" type="text" placeholder="Madrid, 28013" data-input-dir2>
+        </div>
+        <div class="form-row">
+          <label for="inputTel">Teléfono</label>
+          <input id="inputTel" type="tel" placeholder="+34 910 123 456" data-input-tel>
+        </div>
+        <div class="form-actions">
+          <button class="ghost-button" type="button" data-cancel-edit>Cancelar</button>
+          <button class="primary-button" type="submit" data-submit-edit>Guardar cambios</button>
+        </div>
+      </form>
+    </section>
+
+    <p class="feedback" data-perfil-feedback aria-live="polite"></p>
+
+  </main>
+
+  <script type="module" src="../js/pages/perfil.js"></script>
+</body>
+</html>

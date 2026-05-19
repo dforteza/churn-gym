@@ -30,6 +30,7 @@ function initDashboard() {
   const session = getSession();
   elements.userLabel.textContent = session?.username || 'Usuario';
 
+  elements.perfil.addEventListener('click', () => { window.location.href = APP_ROUTES.perfil; });
   elements.logout.addEventListener('click', handleLogout);
 
   // Filtros de backend: cada cambio lanza una nueva petición desde la página 0.
