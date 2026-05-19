@@ -46,7 +46,3 @@ node_modules/
 # OS
 .DS_Store
 Thumbs.db
-
-# Archivos locales de trabajo
-notas.txt
-image.png
