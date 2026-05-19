@@ -7,8 +7,8 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
-public class PerfilResponseDto {
-
+public class PerfilResponseDto 
+{
     private String        username;
     private String        email;
     private String        nombreGimnasio;

@@ -13,25 +13,32 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class PerfilServiceImpl implements PerfilService {
-
+public class PerfilServiceImpl implements PerfilService 
+{
     private final UsuarioRepository usuarioRepository;
     private final PerfilMapper      perfilMapper;
 
     @Override
-    public PerfilResponseDto getPerfil(String username) {
-        return perfilMapper.toDto(getUsuario(username));
+    public PerfilResponseDto getPerfil(String username) 
+    {
+        Usuario usuario = usuarioRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        
+        return (perfilMapper.toDto(usuario));
     }
 
     @Override
-    public PerfilResponseDto updatePerfil(String username, PerfilUpdateDto dto) {
-        Usuario usuario = getUsuario(username);
-        perfilMapper.updateUsuario(dto, usuario);
-        return perfilMapper.toDto(usuarioRepository.save(usuario));
-    }
-
-    private Usuario getUsuario(String username) {
-        return usuarioRepository.findByUsername(username)
+    public PerfilResponseDto updatePerfil(String username, PerfilUpdateDto dto) 
+    {
+        Usuario usuario = usuarioRepository
+                .findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        
+        perfilMapper.updateUsuario(dto, usuario);
+
+        Usuario updatedUsuario = usuarioRepository.save(usuario);
+
+        return (perfilMapper.toDto(updatedUsuario));
     }
 }

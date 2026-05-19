@@ -7,8 +7,8 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
-public class PerfilUpdateDto {
-
+public class PerfilUpdateDto 
+{
     @Size(max = 150)
     private String nombreGimnasio;
 
@@ -20,7 +20,7 @@ public class PerfilUpdateDto {
 
     @Pattern(
         regexp = "^\\+34[6-9][0-9]{8}$",
-        message = "Debe tener el formato +34XXXXXXXXX"
+        message = "El número de teléfono debe tener el formato +34XXXXXXXXX"
     )
     private String telefono;
 }

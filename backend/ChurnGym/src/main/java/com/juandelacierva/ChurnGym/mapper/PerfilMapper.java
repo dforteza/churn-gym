@@ -13,11 +13,10 @@ import com.juandelacierva.ChurnGym.dto.PerfilUpdateDto;
     componentModel = "spring",
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
-public interface PerfilMapper {
-
+public interface PerfilMapper 
+{
     PerfilResponseDto toDto(Usuario usuario);
 
-    // Solo sobreescribe los campos no nulos del DTO — comportamiento PATCH real.
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "username", ignore = true)
     @Mapping(target = "email", ignore = true)
