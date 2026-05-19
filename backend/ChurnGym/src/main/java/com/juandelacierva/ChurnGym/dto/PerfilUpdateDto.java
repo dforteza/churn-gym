@@ -19,8 +19,8 @@ public class PerfilUpdateDto {
     private String direccion2;
 
     @Pattern(
-        regexp = "^(\\+34[\\s\\-]?)?[6-9][0-9]{2}[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{3}$",
-        message = "Debe ser un número español válido (ej. 910 123 456 o +34 910 123 456)"
+        regexp = "^\\+34[6-9][0-9]{8}$",
+        message = "Debe tener el formato +34XXXXXXXXX"
     )
     private String telefono;
 }
