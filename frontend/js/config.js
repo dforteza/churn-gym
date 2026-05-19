@@ -107,6 +107,9 @@ async function apiFetch(url, options = {}) {
   // enviado por el backend antes de generar una excepción genérica.
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
+    if (error.errors && typeof error.errors === 'object') {
+      throw new Error(Object.values(error.errors).join(' · '));
+    }
     throw new Error(error.message || `Error ${response.status}`);
   }
 
