@@ -16,7 +16,7 @@ Cada cliente estratégico es el **primero de su grupo** en la lista (ordenada po
 
 | Campo | Valor |
 |---|---|
-| ID | 51 |
+| ID | 1 |
 | Meses como socia | 22 |
 | Frecuencia semanal | 5.0 visitas |
 | Semanas inactiva | 0 |
@@ -35,7 +35,7 @@ Ejemplo perfecto del socio que no necesita intervención. Lleva casi dos años, 
 
 | Campo | Valor |
 |---|---|
-| ID | 111 |
+| ID | 61 |
 | Meses como socia | 8 |
 | Frecuencia semanal | 1.5 visitas |
 | Semanas inactiva | 1 |
@@ -54,7 +54,7 @@ Representa la zona gris: lleva 8 meses, viene poco y su tendencia baja. No encaj
 
 | Campo | Valor |
 |---|---|
-| ID | 151 |
+| ID | 101 |
 | Meses como socio | 2 |
 | Frecuencia semanal | 4.0 visitas |
 | Semanas inactivo | 0 |
@@ -73,7 +73,7 @@ Nuevo que ya tiene hábito. Solo lleva 2 meses pero viene 4 días a la semana co
 
 | Campo | Valor |
 |---|---|
-| ID | 181 |
+| ID | 131 |
 | Meses como socio | 36 |
 | Frecuencia semanal | 0.5 visitas |
 | Semanas inactivo | 9 |
@@ -105,7 +105,7 @@ prob = 1 / (1 + e^-2.49) ≈ 0.92  →  ALTO ✓
 
 | Campo | Valor |
 |---|---|
-| ID | 206 |
+| ID | 156 |
 | Meses como socia | 28 |
 | Frecuencia semanal | 1.8 visitas |
 | Semanas inactiva | 2 |
@@ -124,7 +124,7 @@ El caso de intervención temprana. Dos semanas de ausencia no parecen mucho, per
 
 | Campo | Valor |
 |---|---|
-| ID | 226 |
+| ID | 176 |
 | Meses como socia | 1 |
 | Frecuencia semanal | 0.3 visitas |
 | Semanas inactiva | 6 |
@@ -143,7 +143,7 @@ Perdida desde el primer mes. Un mes de alta, 6 semanas sin venir y frecuencia ca
 
 | Campo | Valor |
 |---|---|
-| ID | 241 |
+| ID | 191 |
 | Meses como socio | 42 |
 | Frecuencia semanal | 0.9 visitas |
 | Semanas inactivo | 0 |
@@ -162,10 +162,10 @@ El riesgo silencioso. Tomás lleva 42 meses y sigue viniendo, pero menos de una 
 
 | # | Nombre | Grupo | Nivel | Prob. | Narrativa demo |
 |---|---|---|---|---|---|
-| 51 | Elena Rivas | ACTIVO_ESTABLE | BAJO | 17% | Socio modelo, no intervenir |
-| 111 | Sofía Mora | IRREGULAR | MEDIO | 38% | Zona gris, monitorizar |
-| 151 | Marc Puig | NUEVO_ENGANCHADO | BAJO | 24% | Nuevo prometedor, consolidar |
-| 181 | Roberto Solís | CONSOLIDADO_EN_RIESGO | ALTO | 92% | Alarma máxima, llamada directa |
-| 206 | Carmen Vidal | VETERANO_EN_PAUSA | MEDIO | 40% | Intervención temprana |
-| 226 | Nadia Flores | NUEVO_SIN_ENGANCHE | ALTO | 87% | Perdida desde el día 1 |
-| 241 | Tomás Herrera | VETERANO_ESPORADICO | BAJO | 17% | Riesgo silencioso |
+| 1 | Elena Rivas | ACTIVO_ESTABLE | BAJO | 17% | Socio modelo, no intervenir |
+| 61 | Sofía Mora | IRREGULAR | MEDIO | 38% | Zona gris, monitorizar |
+| 101 | Marc Puig | NUEVO_ENGANCHADO | BAJO | 24% | Nuevo prometedor, consolidar |
+| 131 | Roberto Solís | CONSOLIDADO_EN_RIESGO | ALTO | 92% | Alarma máxima, llamada directa |
+| 156 | Carmen Vidal | VETERANO_EN_PAUSA | MEDIO | 40% | Intervención temprana |
+| 176 | Nadia Flores | NUEVO_SIN_ENGANCHE | ALTO | 87% | Perdida desde el día 1 |
+| 191 | Tomás Herrera | VETERANO_ESPORADICO | BAJO | 17% | Riesgo silencioso |
