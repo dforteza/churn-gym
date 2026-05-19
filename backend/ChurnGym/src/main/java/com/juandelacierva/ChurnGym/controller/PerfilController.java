@@ -9,6 +9,7 @@ import com.juandelacierva.ChurnGym.dto.PerfilResponseDto;
 import com.juandelacierva.ChurnGym.dto.PerfilUpdateDto;
 import com.juandelacierva.ChurnGym.service.interfaces.PerfilService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,7 +30,7 @@ public class PerfilController {
     @PutMapping
     public ResponseEntity<PerfilResponseDto> updatePerfil(
             Authentication authentication,
-            @RequestBody PerfilUpdateDto dto) 
+            @Valid @RequestBody PerfilUpdateDto dto)
     {
         PerfilResponseDto perfilResponseDto = perfilService.updatePerfil(authentication.getName(), dto);
         

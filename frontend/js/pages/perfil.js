@@ -8,10 +8,12 @@ const elements = {
   logout:       document.querySelector('[data-logout]'),
   feedback:     document.querySelector('[data-perfil-feedback]'),
 
-  // Visualización
-  gymName:      document.querySelector('[data-gym-name]'),
-  gymDir1:      document.querySelector('[data-gym-dir1]'),
-  gymDir2:      document.querySelector('[data-gym-dir2]'),
+  // Campos que aparecen tanto en el hero como en el panel — se actualizan todos.
+  gymNames:     document.querySelectorAll('[data-gym-name]'),
+  gymDir1s:     document.querySelectorAll('[data-gym-dir1]'),
+  gymDir2s:     document.querySelectorAll('[data-gym-dir2]'),
+
+  // Campos únicos
   gymTel:       document.querySelector('[data-gym-tel]'),
   gymEmail:     document.querySelector('[data-gym-email]'),
   gymUsername:  document.querySelector('[data-gym-username]'),
@@ -57,15 +59,14 @@ async function loadPerfil() {
 }
 
 function renderPerfil(perfil) {
-  elements.gymName.textContent     = perfil.nombreGimnasio || '—';
-  elements.gymDir1.textContent     = perfil.direccion1     || '—';
-  elements.gymDir2.textContent     = perfil.direccion2     || '—';
-  elements.gymTel.textContent      = perfil.telefono       || '—';
+  elements.gymNames.forEach(el => { el.textContent = perfil.nombreGimnasio || '—'; });
+  elements.gymDir1s.forEach(el => { el.textContent = perfil.direccion1     || '—'; });
+  elements.gymDir2s.forEach(el => { el.textContent = perfil.direccion2     || '—'; });
+  elements.gymTel.textContent      = perfil.telefono || '—';
   elements.gymEmail.textContent    = perfil.email;
   elements.gymUsername.textContent = perfil.username;
   elements.gymSince.textContent    = formatDate(perfil.createdAt);
 
-  // Pre-rellena el formulario con los valores actuales
   elements.inputName.value = perfil.nombreGimnasio || '';
   elements.inputDir1.value = perfil.direccion1     || '';
   elements.inputDir2.value = perfil.direccion2     || '';
@@ -100,7 +101,7 @@ async function handleSubmit(event) {
 }
 
 function toggleForm(show) {
-  elements.editForm.hidden  = !show;
+  elements.editForm.hidden   = !show;
   elements.editToggle.hidden = show;
   setFeedback('');
 }

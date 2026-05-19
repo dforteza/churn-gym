@@ -15,6 +15,7 @@ const state = {
   page: 0,
   totalPages: 1,
   totalElements: 0,
+  initialLoaded: false,
 };
 
 // Referencias a los elementos del DOM utilizados por la vista.
@@ -80,6 +81,14 @@ async function loadDashboard({ relaunch = false, page = 0 } = {}) {
     const pagination = extractPagination(analisis.resultados);
     state.totalPages    = pagination.totalPages;
     state.totalElements = pagination.totalElements;
+
+    // Si es la primera carga y no hay resultados, lanza el análisis automáticamente.
+    if (!relaunch && !state.initialLoaded && state.totalElements === 0) {
+      state.initialLoaded = true;
+      await loadDashboard({ relaunch: true });
+      return;
+    }
+    state.initialLoaded = true;
 
     // Mantiene seleccionados únicamente los clientes que siguen en la página actual.
     state.selectedIds = new Set(
