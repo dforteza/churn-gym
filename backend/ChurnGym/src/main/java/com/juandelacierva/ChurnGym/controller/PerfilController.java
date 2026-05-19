@@ -22,7 +22,7 @@ public class PerfilController {
         return ResponseEntity.ok(perfilService.getPerfil(authentication.getName()));
     }
 
-    @PatchMapping
+    @PutMapping
     public ResponseEntity<PerfilResponseDto> updatePerfil(
             Authentication authentication,
             @RequestBody PerfilUpdateDto dto) {
