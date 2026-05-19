@@ -469,3 +469,8 @@ INSERT INTO clientes_datos (id, cliente_privado_id, anyo_nacimiento, meses_como_
 (198, 198, 1974, 28, 'MANANA', 'CARDIO',            1.5, 0, -22.0),
 (199, 199, 1969, 50, 'NOCHE',  'CROSSFIT',          0.6, 0,  -7.0),
 (200, 200, 1971, 38, 'TARDE',  'MUSCULACION',       1.0, 0, -14.0);
+
+-- Sincronizar secuencias tras inserción con IDs explícitos.
+-- Sin esto, el siguiente INSERT sin ID colisionaría con los existentes.
+SELECT setval('clientes_privados_id_seq', 200);
+SELECT setval('clientes_datos_id_seq',    200);
