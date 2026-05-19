@@ -25,6 +25,8 @@ public class GlobalExceptionHandler
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage()));
 
+        log.warn("Validación fallida — campos: {}", errors);
+
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("error", "Bad Request");
@@ -52,6 +54,8 @@ public class GlobalExceptionHandler
     @ExceptionHandler(ModeloAcessDeniedException.class)
     public ResponseEntity<Object> handleModeloAcessDeniedException(ModeloAcessDeniedException ex)
     {
+        log.warn("Acceso denegado — {}", ex.getMessage());
+
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.FORBIDDEN.value());
         body.put("error", "Forbidden");
@@ -64,6 +68,8 @@ public class GlobalExceptionHandler
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex)
     {
+        log.warn("Recurso no encontrado — {}", ex.getMessage());
+
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.NOT_FOUND.value());
         body.put("error", "Not Found");

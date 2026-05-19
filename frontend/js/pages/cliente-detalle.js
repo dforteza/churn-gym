@@ -20,7 +20,8 @@ const elements = {
   clientFrequency: document.querySelector('[data-client-frequency]'),
   clientInactive: document.querySelector('[data-client-inactive]'),
   clientTrend: document.querySelector('[data-client-trend]'),
-  clientId: document.querySelector('[data-client-id]'),
+  heroCard:    document.querySelector('.hero-card'),
+  probFill:    document.querySelector('[data-prob-fill]'),
 };
 
 // La pantalla de detalle aplica la misma protección de sesión que el dashboard.
@@ -64,17 +65,23 @@ function renderClient(client) {
   // Renderiza los datos del cliente utilizando una estructura compatible con mock y API real.
   elements.clientName.textContent = `${client.nombre} ${client.apellidos}`;
   elements.clientEmail.textContent = client.email;
+  elements.heroCard.className = `hero-card ${client.nivelRiesgo}`;
   elements.clientRisk.textContent = client.nivelRiesgo;
   elements.clientRisk.className = `risk-pill ${client.nivelRiesgo}`;
   elements.clientProbability.textContent = formatProbability(client.probabilidadAbandono);
+  elements.clientProbability.className = client.nivelRiesgo;
+  elements.probFill.style.width = `${Math.round(client.probabilidadAbandono * 100)}%`;
+  elements.probFill.className = `prob-fill ${client.nivelRiesgo}`;
   elements.clientGroup.textContent = getGroupLabel(client.grupo, { titleCase: true });
   elements.clientSport.textContent = formatEnum(client.deportePrincipal, { titleCase: true });
   elements.clientTime.textContent = formatEnum(client.franjaHoraria, { titleCase: true });
   elements.clientMembership.textContent = `${client.mesesComoSocio} meses`;
   elements.clientFrequency.textContent = `${client.frecuenciaSemanal} visitas/sem.`;
   elements.clientInactive.textContent = `${client.semanasInactivo} semanas`;
-  elements.clientTrend.textContent = `${client.tendenciaMensual}%`;
-  elements.clientId.textContent = client.clienteId;
+  const trend = client.tendenciaMensual;
+  const arrow = trend < 0 ? '↓' : trend > 0 ? '↑' : '';
+  elements.clientTrend.textContent = `${arrow} ${trend}%`.trim();
+  elements.clientTrend.className = trend < 0 ? 'trend-negative' : trend > 0 ? 'trend-positive' : '';
 }
 
 function renderMissingClient() {
@@ -91,7 +98,6 @@ function renderMissingClient() {
   elements.clientFrequency.textContent = '--';
   elements.clientInactive.textContent = '--';
   elements.clientTrend.textContent = '--';
-  elements.clientId.textContent = '--';
 }
 
 function setFeedback(message) {

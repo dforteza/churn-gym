@@ -56,6 +56,9 @@ public class AnalisisServiceImpl implements AnalisisService
                 ? LocalDateTime.now()
                 : todos.get(0).getCalculadoEn();
 
+        log.info("Dashboard consultado — {} resultados | filtros: riesgo={} grupo={} franja={} deporte={}",
+                todos.size(), nivelRiesgo, grupo, franja, deporte);
+
         return (analisisMapper.toAnalisisResumenResponse(todos, pagina, calculadoEn));
     }
 
@@ -70,6 +73,11 @@ public class AnalisisServiceImpl implements AnalisisService
 
         ClienteAnalisisResponseDto response = analisisMapper.toClienteAnalisisResponse(resultado,
                 resultado.getClienteDatos().getClientePrivado());
+
+        log.info("Detalle solicitado — cliente #{}: {} {}",
+                clienteId,
+                resultado.getClienteDatos().getClientePrivado().getNombre(),
+                resultado.getClienteDatos().getClientePrivado().getApellidos());
 
         return (response);
     }

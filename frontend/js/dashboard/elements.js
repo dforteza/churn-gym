@@ -5,6 +5,9 @@ function getDashboardElements() {
     logout: document.querySelector('[data-logout]'),
     refresh: document.querySelector('[data-refresh]'),
     riskFilter: document.querySelector('[data-risk-filter]'),
+    grupoFilter: document.querySelector('[data-grupo-filter]'),
+    franjaFilter: document.querySelector('[data-franja-filter]'),
+    deporteFilter: document.querySelector('[data-deporte-filter]'),
     search: document.querySelector('[data-search]'),
     calculated: document.querySelector('[data-calculated]'),
     resultCount: document.querySelector('[data-result-count]'),
@@ -21,6 +24,9 @@ function getDashboardElements() {
     chartHigh: document.querySelector('[data-chart-high]'),
     chartMedium: document.querySelector('[data-chart-medium]'),
     chartLow: document.querySelector('[data-chart-low]'),
+    prevPage: document.querySelector('[data-prev-page]'),
+    nextPage: document.querySelector('[data-next-page]'),
+    pageInfo: document.querySelector('[data-page-info]'),
   };
 }
 

@@ -100,14 +100,18 @@ button {
 }
 
 .hero-card {
-  /* Tarjeta principal con la identidad del cliente y su nivel de riesgo. */
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding: 1.25rem;
   margin-bottom: 1rem;
+  border-left: 4px solid var(--line);
 }
+
+.hero-card.ALTO  { border-left-color: var(--high); }
+.hero-card.MEDIO { border-left-color: var(--medium); }
+.hero-card.BAJO  { border-left-color: var(--low); }
 
 .hero-email {
   margin-bottom: 0;
@@ -126,6 +130,33 @@ button {
   font-size: 2rem;
   line-height: 1;
 }
+
+.hero-risk strong.ALTO   { color: var(--high); }
+.hero-risk strong.MEDIO  { color: var(--medium); }
+.hero-risk strong.BAJO   { color: var(--low); }
+
+.prob-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.prob-fill {
+  height: 100%;
+  border-radius: 999px;
+  width: 0;
+  transition: width 0.6s ease;
+  background: var(--muted);
+}
+
+.prob-fill.ALTO  { background: var(--high); }
+.prob-fill.MEDIO { background: var(--medium); }
+.prob-fill.BAJO  { background: var(--low); }
+
+.trend-positive { color: var(--low); }
+.trend-negative { color: var(--high); }
 
 .hero-risk span:last-child {
   color: var(--muted);
