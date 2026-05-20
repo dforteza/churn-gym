@@ -63,7 +63,7 @@ class AnalisisServiceControllerTest
     @DisplayName("GET /api/analisis/vigente - Debe devolver 200")
     void shouldReturn200WhenGetAnalisisVigente() throws Exception
     {
-        when(analisisService.getAnalisisVigente(any(), any(), any(), any(), any())).thenReturn(resumenDto);
+        when(analisisService.getAnalisisVigente(any(), any(), any(), any(), any(), any())).thenReturn(resumenDto);
 
         mockMvc.perform(get("/api/analisis/vigente")
                 .accept(MediaType.APPLICATION_JSON))

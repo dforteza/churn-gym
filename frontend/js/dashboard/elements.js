@@ -2,6 +2,7 @@
 function getDashboardElements() {
   return {
     userLabel: document.querySelector('[data-user-label]'),
+    perfil: document.querySelector('[data-perfil]'),
     logout: document.querySelector('[data-logout]'),
     refresh: document.querySelector('[data-refresh]'),
     riskFilter: document.querySelector('[data-risk-filter]'),

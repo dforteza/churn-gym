@@ -8,8 +8,8 @@ import com.juandelacierva.ChurnGym.domain.Usuario;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
-
+public interface UserMapper 
+{
     UsuarioResponseDto toUsuarioResponseDto(Usuario usuario);
 
     List<UsuarioResponseDto> toUsuarioResponseDtoList(List<Usuario> usuarios);

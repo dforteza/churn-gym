@@ -16,6 +16,8 @@ const APP_ROUTES = {
 
   dashboard: new URL('../pages/dashboard.html', import.meta.url).href,
 
+  perfil: new URL('../pages/perfil.html', import.meta.url).href,
+
   // Genera la URL de la pantalla de detalle de cliente incluyendo su identificador.
   clientDetail: (clientId) => {
     const detailUrl = new URL('../pages/cliente-detalle.html', import.meta.url);
@@ -42,6 +44,10 @@ function getAnalisisClienteEndpoint(clientId) {
   return MOCK_MODE
     ? `${MOCK_BASE}mock-cliente.json`
     : `${API_BASE}/analisis/cliente/${clientId}`;
+}
+
+function getPerfilEndpoint() {
+  return `${API_BASE}/v1/perfil`;
 }
 
 async function apiLogin(username, password) {
@@ -101,6 +107,9 @@ async function apiFetch(url, options = {}) {
   // enviado por el backend antes de generar una excepción genérica.
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
+    if (error.errors && typeof error.errors === 'object') {
+      throw new Error(Object.values(error.errors).join(' · '));
+    }
     throw new Error(error.message || `Error ${response.status}`);
   }
 
@@ -118,4 +127,5 @@ export {
   getAnalisisEndpoint,
   getAnalisisLanzarEndpoint,
   getLoginEndpoint,
+  getPerfilEndpoint,
 };

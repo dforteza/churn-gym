@@ -13,13 +13,13 @@ function buildCampaignMailto(emails) {
     'Equipo Churn Gym',
   ].join('\n');
 
-  const params = new URLSearchParams({
-    bcc: emails.join(','),
-    subject,
-    body,
-  });
+  const params = [
+    `bcc=${encodeURIComponent(emails.join(','))}`,
+    `subject=${encodeURIComponent(subject)}`,
+    `body=${encodeURIComponent(body)}`,
+  ].join('&');
 
-  return `mailto:?${params.toString()}`;
+  return `mailto:?${params}`;
 }
 
 // Prepara la campaña de correo para los clientes seleccionados en el dashboard.
