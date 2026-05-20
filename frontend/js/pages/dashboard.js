@@ -60,7 +60,7 @@ function initDashboard() {
 }
 
 // Carga el análisis desde la API y actualiza el estado visual del dashboard.
-async function loadDashboard({ relaunch = false, page = 1 } = {}) {
+async function loadDashboard({ relaunch = false, page = 0 } = {}) {
   setFeedback('');
   elements.refresh.disabled = true;
   elements.refresh.textContent = relaunch ? 'Actualizando...' : 'Cargando...';
