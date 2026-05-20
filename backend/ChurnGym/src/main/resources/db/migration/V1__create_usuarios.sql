@@ -1,5 +1,7 @@
 -- V1__create_usuarios.sql
 
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
 CREATE TABLE usuarios (
     id               BIGSERIAL     PRIMARY KEY,
     username         VARCHAR(50)   NOT NULL UNIQUE,
