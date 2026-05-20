@@ -1,14 +1,9 @@
 -- V6__insert_socios_simulados.sql
 -- =============================================================================
--- 200 socios con distribución realista por grupo de riesgo (Opción A).
--- Organizado en 7 secciones, una por grupo. El primer registro de cada sección
--- es un cliente estratégico pensado para la demo (marcado con -- *).
--- IDs 1–200. No tocar V1–V5 (checksums fijos).
--- =============================================================================
 
 
 -- ============================================================
--- SECCIÓN 1 — ACTIVO_ESTABLE  (IDs 1–60 · 60 socios)
+-- SECCIÓN 1 - ACTIVO_ESTABLE  (IDs 1–60 . 60 socios)
 -- Regla: frecuencia >= 2.0  AND  semanas_inactivo = 0  AND  meses >= 4
 -- ============================================================
 INSERT INTO clientes_privados (id, nombre, apellidos, dni, gmail) VALUES
@@ -137,7 +132,7 @@ INSERT INTO clientes_datos (id, cliente_privado_id, anyo_nacimiento, meses_como_
 
 
 -- ============================================================
--- SECCIÓN 2 — IRREGULAR  (IDs 61–100 · 40 socios)
+-- SECCIÓN 2 - IRREGULAR  (IDs 61–100 . 40 socios)
 -- Regla: no encaja en ningún otro grupo (zona gris 4–12 meses
 --        o veteranos con 1 semana inactiva)
 -- ============================================================
@@ -227,7 +222,7 @@ INSERT INTO clientes_datos (id, cliente_privado_id, anyo_nacimiento, meses_como_
 
 
 -- ============================================================
--- SECCIÓN 3 — NUEVO_ENGANCHADO  (IDs 101–130 · 30 socios)
+-- SECCIÓN 3 - NUEVO_ENGANCHADO  (IDs 101–130 . 30 socios)
 -- Regla: meses <= 3  AND  frecuencia >= 1.0  AND  semanas_inactivo = 0
 -- ============================================================
 INSERT INTO clientes_privados (id, nombre, apellidos, dni, gmail) VALUES
@@ -296,7 +291,7 @@ INSERT INTO clientes_datos (id, cliente_privado_id, anyo_nacimiento, meses_como_
 
 
 -- ============================================================
--- SECCIÓN 4 — CONSOLIDADO_EN_RIESGO  (IDs 131–155 · 25 socios)
+-- SECCIÓN 4 - CONSOLIDADO_EN_RIESGO  (IDs 131–155 . 25 socios)
 -- Regla: meses > 12  AND  semanas_inactivo >= 3
 -- ============================================================
 INSERT INTO clientes_privados (id, nombre, apellidos, dni, gmail) VALUES
@@ -355,7 +350,7 @@ INSERT INTO clientes_datos (id, cliente_privado_id, anyo_nacimiento, meses_como_
 
 
 -- ============================================================
--- SECCIÓN 5 — VETERANO_EN_PAUSA  (IDs 156–175 · 20 socios)
+-- SECCIÓN 5 - VETERANO_EN_PAUSA  (IDs 156–175 . 20 socios)
 -- Regla: meses > 12  AND  semanas_inactivo = 2
 -- ============================================================
 INSERT INTO clientes_privados (id, nombre, apellidos, dni, gmail) VALUES
@@ -404,7 +399,7 @@ INSERT INTO clientes_datos (id, cliente_privado_id, anyo_nacimiento, meses_como_
 
 
 -- ============================================================
--- SECCIÓN 6 — NUEVO_SIN_ENGANCHE  (IDs 176–190 · 15 socios)
+-- SECCIÓN 6 - NUEVO_SIN_ENGANCHE  (IDs 176–190 . 15 socios)
 -- Regla: meses <= 3  AND  frecuencia < 1.0
 -- ============================================================
 INSERT INTO clientes_privados (id, nombre, apellidos, dni, gmail) VALUES
@@ -443,7 +438,7 @@ INSERT INTO clientes_datos (id, cliente_privado_id, anyo_nacimiento, meses_como_
 
 
 -- ============================================================
--- SECCIÓN 7 — VETERANO_ESPORADICO  (IDs 191–200 · 10 socios)
+-- SECCIÓN 7 - VETERANO_ESPORADICO  (IDs 191–200 . 10 socios)
 -- Regla: meses > 12  AND  semanas_inactivo = 0  AND  frecuencia < 2.0
 -- ============================================================
 INSERT INTO clientes_privados (id, nombre, apellidos, dni, gmail) VALUES

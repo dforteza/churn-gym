@@ -27,7 +27,7 @@ p {
   margin-top: 0;
 }
 
-/* ── Topbar ─────────────────────────────────────── */
+/* == Topbar ======================================= */
 .topbar {
   display: flex;
   align-items: center;
@@ -62,7 +62,7 @@ h1 {
   flex-wrap: wrap;
 }
 
-/* ── Botones ─────────────────────────────────────── */
+/* == Botones ======================================= */
 button {
   cursor: pointer;
   font-family: inherit;
@@ -99,14 +99,14 @@ button:disabled {
   background: var(--line);
 }
 
-/* ── Layout principal ────────────────────────────── */
+/* == Layout principal ============================== */
 .perfil-page {
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem clamp(1rem, 4vw, 2rem) 4rem;
 }
 
-/* ── Hero del gimnasio ───────────────────────────── */
+/* == Hero del gimnasio ============================= */
 .gym-hero {
   display: flex;
   align-items: flex-start;
@@ -131,7 +131,7 @@ button:disabled {
   font-size: 0.92rem;
 }
 
-/* ── Grid de paneles ─────────────────────────────── */
+/* == Grid de paneles =============================== */
 .perfil-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -139,7 +139,7 @@ button:disabled {
   margin-bottom: 1.25rem;
 }
 
-/* ── Panel ───────────────────────────────────────── */
+/* == Panel ========================================= */
 .panel {
   background: var(--panel);
   border-radius: 14px;
@@ -167,7 +167,7 @@ button:disabled {
   font-size: 0.85rem;
 }
 
-/* ── Lista de detalles ───────────────────────────── */
+/* == Lista de detalles ============================= */
 .detail-list {
   margin: 0;
   padding: 0.75rem 1.5rem 1.25rem;
@@ -200,7 +200,7 @@ button:disabled {
   text-align: right;
 }
 
-/* ── Panel de edición ────────────────────────────── */
+/* == Panel de edición ============================== */
 .edit-panel {
   margin-bottom: 1.25rem;
 }
@@ -250,7 +250,7 @@ button:disabled {
   padding-top: 0.5rem;
 }
 
-/* ── Feedback ────────────────────────────────────── */
+/* == Feedback ====================================== */
 .feedback {
   min-height: 1.4rem;
   color: var(--primary-dark);
@@ -259,7 +259,7 @@ button:disabled {
   text-align: center;
 }
 
-/* ── Responsive ──────────────────────────────────── */
+/* == Responsive ==================================== */
 @media (max-width: 640px) {
   .perfil-grid {
     grid-template-columns: 1fr;

@@ -9,17 +9,18 @@ import {
 const PAGE_SIZE = 20;
 
 // Recupera el análisis general que se muestra en el dashboard.
-function apiGetAnalisis({ nivelRiesgo, grupo, franjaHoraria, deportePrincipal, page = 0 } = {}) {
+function apiGetAnalisis({ nivelRiesgo, grupo, franjaHoraria, deportePrincipal, nombre, page = 0 } = {}) {
   if (MOCK_MODE) {
     return apiFetch(getAnalisisEndpoint());
   }
 
   const url = new URL(getAnalisisEndpoint());
 
-  if (nivelRiesgo)     url.searchParams.set('nivelRiesgo',     nivelRiesgo);
-  if (grupo)           url.searchParams.set('grupo',           grupo);
-  if (franjaHoraria)   url.searchParams.set('franjaHoraria',   franjaHoraria);
+  if (nivelRiesgo)      url.searchParams.set('nivelRiesgo',      nivelRiesgo);
+  if (grupo)            url.searchParams.set('grupo',            grupo);
+  if (franjaHoraria)    url.searchParams.set('franjaHoraria',    franjaHoraria);
   if (deportePrincipal) url.searchParams.set('deportePrincipal', deportePrincipal);
+  if (nombre)           url.searchParams.set('nombre',           nombre);
 
   url.searchParams.set('page', page);
   url.searchParams.set('size', PAGE_SIZE);

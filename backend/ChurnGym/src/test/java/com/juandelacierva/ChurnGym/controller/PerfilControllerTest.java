@@ -11,10 +11,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,8 +38,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         classes = {JwtAuthenticationFilter.class, JwtGenerator.class}
     )
 )
+@Import(PerfilControllerTest.TestSecurityConfig.class)
 class PerfilControllerTest
 {
+    // SecurityConfig real no puede cargar (JwtAuthenticationFilter excluido), así que
+    // proveemos una config mínima: autenticación requerida + CSRF deshabilitado.
+    @TestConfiguration
+    static class TestSecurityConfig {
+        @Bean
+        SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+            http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
+            return http.build();
+        }
+    }
+
     @Autowired
     private MockMvc mockMvc;
 
