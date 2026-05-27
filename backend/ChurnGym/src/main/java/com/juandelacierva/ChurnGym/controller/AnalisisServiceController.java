@@ -25,7 +25,7 @@ import com.juandelacierva.ChurnGym.service.interfaces.AnalisisService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/analisis")
+@RequestMapping("/api/v1/analisis")
 @RequiredArgsConstructor
 public class AnalisisServiceController
 {
@@ -35,7 +35,7 @@ public class AnalisisServiceController
 
     private final AnalisisService analisisService;
 
-    @GetMapping("/vigente")
+    @GetMapping("")
     public ResponseEntity<AnalisisResumenResponseDto> getAnalisisVigente(
             @RequestParam(required = false) NivelRiesgo      nivelRiesgo,
             @RequestParam(required = false) GrupoRiesgo      grupo,
@@ -53,13 +53,13 @@ public class AnalisisServiceController
             );
     }
 
-    @PostMapping("/lanzar")
+    @PostMapping("/ejecutar")
     public ResponseEntity<AnalisisResumenResponseDto> lanzarAnalisis()
     {
         return (new ResponseEntity<>(analisisService.lanzarAnalisis(), HttpStatus.OK));
     }
 
-    @GetMapping("/cliente/{clienteId}")
+    @GetMapping("/{clienteId}")
     public ResponseEntity<ClienteAnalisisResponseDto> getDetalleCliente(@PathVariable Long clienteId)
     {
         return (new ResponseEntity<>(analisisService.getDetalleCliente(clienteId), HttpStatus.OK));
