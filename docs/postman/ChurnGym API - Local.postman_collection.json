@@ -1,13 +1,11 @@
 {
   "info": {
+    "_postman_id": "873bc320-2294-4f6b-b761-d97f580e3323",
     "name": "ChurnGym API - Local",
-    "_postman_id": "churngym-api-local-v2",
-    "description": "Colección completa ChurnGym API. Ejecutar en orden: Auth → Lanzar → resto.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "auth": {
-    "type": "bearer",
-    "bearer": [{ "key": "token", "value": "{{jwtToken}}", "type": "string" }]
+    "description": "ColecciÃ³n completa ChurnGym API. Ejecutar en orden: Auth â†’ Lanzar â†’ resto.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51821019",
+    "_collection_link": "https://go.postman.co/collection/51821019-873bc320-2294-4f6b-b761-d97f580e3323?source=collection_link"
   },
   "item": [
     {
@@ -25,22 +23,38 @@
                   "pm.test('Token presente', () => pm.expect(json.token).to.be.a('string').and.not.empty);",
                   "if (json.token) pm.environment.set('jwtToken', json.token);"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin1234\"\n}"
+              "raw": "{\n  \"username\": \"paco\",\n  \"password\": \"admin1234\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
             },
             "description": "Autentica al usuario admin y guarda el JWT en jwtToken. Ejecutar siempre primero."
           },
@@ -60,26 +74,40 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"contraseña_incorrecta\"\n}"
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"contraseÃ±a_incorrecta\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
             },
-            "description": "Credenciales incorrectas — debe devolver 401."
+            "description": "Credenciales incorrectas â€” debe devolver 401."
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Análisis",
+      "name": "Analisis",
       "item": [
         {
           "name": "Lanzar",
@@ -106,9 +134,16 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/analisis/lanzar",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "analisis", "lanzar"]
+                  "raw": "{{baseUrl}}/api/v1/analisis/ejecutar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "analisis",
+                    "ejecutar"
+                  ]
                 },
                 "description": "Lanza el motor de riesgo sobre todos los clientes. Guarda el primer clienteId en el entorno."
               },
@@ -131,11 +166,18 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/analisis/lanzar",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "analisis", "lanzar"]
+                  "raw": "{{baseUrl}}/api/v1/analisis/ejecutar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "analisis",
+                    "ejecutar"
+                  ]
                 },
-                "description": "Relanza el análisis — borra los resultados anteriores y recalcula. Verifica que calculadoEn se actualiza."
+                "description": "Relanza el anÃ¡lisis â€” borra los resultados anteriores y recalcula. Verifica que calculadoEn se actualiza."
               },
               "response": []
             }
@@ -145,35 +187,7 @@
           "name": "Vigente",
           "item": [
             {
-              "name": "GET-AnalisisVigente",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                      "const json = pm.response.json();",
-                      "pm.test('totalClientes es número', () => pm.expect(json.totalClientes).to.be.a('number'));",
-                      "pm.test('resultados tiene content', () => pm.expect(json.resultados.content).to.be.an('array'));"
-                    ],
-                    "type": "text/javascript"
-                  }
-                }
-              ],
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/api/analisis/vigente",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "analisis", "vigente"]
-                },
-                "description": "Sin filtros. Devuelve primera página (10 elementos) ordenada por probabilidadAbandono desc."
-              },
-              "response": []
-            },
-            {
-              "name": "Paginación",
+              "name": "Paginacion",
               "item": [
                 {
                   "name": "GET-AnalisisVigente-Pagina2",
@@ -184,7 +198,7 @@
                         "exec": [
                           "pm.test('Status 200', () => pm.response.to.have.status(200));",
                           "const json = pm.response.json();",
-                          "pm.test('Página 1 (0-indexed)', () => pm.expect(json.resultados.number).to.equal(1));"
+                          "pm.test('PÃ¡gina 1 (0-indexed)', () => pm.expect(json.resultados.number).to.equal(1));"
                         ],
                         "type": "text/javascript"
                       }
@@ -194,15 +208,27 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?page=1&size=5",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
+                      "raw": "{{baseUrl}}/api/v1/analisis?page=1&size=5",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
                       "query": [
-                        { "key": "page", "value": "1" },
-                        { "key": "size", "value": "5" }
+                        {
+                          "key": "page",
+                          "value": "1"
+                        },
+                        {
+                          "key": "size",
+                          "value": "5"
+                        }
                       ]
                     },
-                    "description": "Segunda página con 5 elementos por página."
+                    "description": "Segunda pÃ¡gina con 5 elementos por pÃ¡gina."
                   },
                   "response": []
                 },
@@ -225,14 +251,23 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?size=101",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
+                      "raw": "{{baseUrl}}/api/v1/analisis?size=101",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
                       "query": [
-                        { "key": "size", "value": "101" }
+                        {
+                          "key": "size",
+                          "value": "101"
+                        }
                       ]
                     },
-                    "description": "size=101 supera el límite — el servidor lo clampea a 100."
+                    "description": "size=101 supera el lÃ­mite â€” el servidor lo clampea a 100."
                   },
                   "response": []
                 }
@@ -258,10 +293,21 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=ALTO",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
-                      "query": [{ "key": "nivelRiesgo", "value": "ALTO" }]
+                      "raw": "{{baseUrl}}/api/v1/analisis?nivelRiesgo=ALTO",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
+                      "query": [
+                        {
+                          "key": "nivelRiesgo",
+                          "value": "ALTO"
+                        }
+                      ]
                     },
                     "description": "Solo clientes con nivel ALTO. Los contadores globales no cambian."
                   },
@@ -284,10 +330,21 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=MEDIO",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
-                      "query": [{ "key": "nivelRiesgo", "value": "MEDIO" }]
+                      "raw": "{{baseUrl}}/api/v1/analisis?nivelRiesgo=MEDIO",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
+                      "query": [
+                        {
+                          "key": "nivelRiesgo",
+                          "value": "MEDIO"
+                        }
+                      ]
                     },
                     "description": "Solo clientes con nivel MEDIO."
                   },
@@ -310,10 +367,21 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=BAJO",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
-                      "query": [{ "key": "nivelRiesgo", "value": "BAJO" }]
+                      "raw": "{{baseUrl}}/api/v1/analisis?nivelRiesgo=BAJO",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
+                      "query": [
+                        {
+                          "key": "nivelRiesgo",
+                          "value": "BAJO"
+                        }
+                      ]
                     },
                     "description": "Solo clientes con nivel BAJO."
                   },
@@ -336,12 +404,23 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?grupo=CONSOLIDADO_EN_RIESGO",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
-                      "query": [{ "key": "grupo", "value": "CONSOLIDADO_EN_RIESGO" }]
+                      "raw": "{{baseUrl}}/api/v1/analisis?grupo=CONSOLIDADO_EN_RIESGO",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
+                      "query": [
+                        {
+                          "key": "grupo",
+                          "value": "CONSOLIDADO_EN_RIESGO"
+                        }
+                      ]
                     },
-                    "description": "Socios consolidados con ausencia prolongada — máxima prioridad de retención."
+                    "description": "Socios consolidados con ausencia prolongada â€” mÃ¡xima prioridad de retenciÃ³n."
                   },
                   "response": []
                 },
@@ -362,12 +441,23 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?grupo=IRREGULAR",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
-                      "query": [{ "key": "grupo", "value": "IRREGULAR" }]
+                      "raw": "{{baseUrl}}/api/v1/analisis?grupo=IRREGULAR",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
+                      "query": [
+                        {
+                          "key": "grupo",
+                          "value": "IRREGULAR"
+                        }
+                      ]
                     },
-                    "description": "Socios con patrón no clasificable en los otros grupos."
+                    "description": "Socios con patrÃ³n no clasificable en los otros grupos."
                   },
                   "response": []
                 },
@@ -388,12 +478,23 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?franjaHoraria=MANANA",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
-                      "query": [{ "key": "franjaHoraria", "value": "MANANA" }]
+                      "raw": "{{baseUrl}}/api/v1/analisis?franjaHoraria=MANANA",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
+                      "query": [
+                        {
+                          "key": "franjaHoraria",
+                          "value": "MANANA"
+                        }
+                      ]
                     },
-                    "description": "Socios con franja horaria de mañana."
+                    "description": "Socios con franja horaria de maÃ±ana."
                   },
                   "response": []
                 },
@@ -414,10 +515,21 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?deportePrincipal=CARDIO",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
-                      "query": [{ "key": "deportePrincipal", "value": "CARDIO" }]
+                      "raw": "{{baseUrl}}/api/v1/analisis?deportePrincipal=CARDIO",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
+                      "query": [
+                        {
+                          "key": "deportePrincipal",
+                          "value": "CARDIO"
+                        }
+                      ]
                     },
                     "description": "Socios cuyo deporte principal es cardio."
                   },
@@ -440,15 +552,27 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=ALTO&franjaHoraria=MANANA",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
+                      "raw": "{{baseUrl}}/api/v1/analisis?nivelRiesgo=ALTO&franjaHoraria=MANANA",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
                       "query": [
-                        { "key": "nivelRiesgo", "value": "ALTO" },
-                        { "key": "franjaHoraria", "value": "MANANA" }
+                        {
+                          "key": "nivelRiesgo",
+                          "value": "ALTO"
+                        },
+                        {
+                          "key": "franjaHoraria",
+                          "value": "MANANA"
+                        }
                       ]
                     },
-                    "description": "Combinación: riesgo ALTO + franja mañana."
+                    "description": "CombinaciÃ³n: riesgo ALTO + franja maÃ±ana."
                   },
                   "response": []
                 },
@@ -469,15 +593,27 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=ALTO&grupo=CONSOLIDADO_EN_RIESGO",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
+                      "raw": "{{baseUrl}}/api/v1/analisis?nivelRiesgo=ALTO&grupo=CONSOLIDADO_EN_RIESGO",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
                       "query": [
-                        { "key": "nivelRiesgo", "value": "ALTO" },
-                        { "key": "grupo", "value": "CONSOLIDADO_EN_RIESGO" }
+                        {
+                          "key": "nivelRiesgo",
+                          "value": "ALTO"
+                        },
+                        {
+                          "key": "grupo",
+                          "value": "CONSOLIDADO_EN_RIESGO"
+                        }
                       ]
                     },
-                    "description": "Combinación: riesgo ALTO + grupo consolidado."
+                    "description": "CombinaciÃ³n: riesgo ALTO + grupo consolidado."
                   },
                   "response": []
                 },
@@ -498,17 +634,35 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?nivelRiesgo=ALTO&grupo=CONSOLIDADO_EN_RIESGO&franjaHoraria=MANANA&deportePrincipal=CARDIO",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
+                      "raw": "{{baseUrl}}/api/v1/analisis?nivelRiesgo=ALTO&grupo=CONSOLIDADO_EN_RIESGO&franjaHoraria=MANANA&deportePrincipal=CARDIO",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
                       "query": [
-                        { "key": "nivelRiesgo", "value": "ALTO" },
-                        { "key": "grupo", "value": "CONSOLIDADO_EN_RIESGO" },
-                        { "key": "franjaHoraria", "value": "MANANA" },
-                        { "key": "deportePrincipal", "value": "CARDIO" }
+                        {
+                          "key": "nivelRiesgo",
+                          "value": "ALTO"
+                        },
+                        {
+                          "key": "grupo",
+                          "value": "CONSOLIDADO_EN_RIESGO"
+                        },
+                        {
+                          "key": "franjaHoraria",
+                          "value": "MANANA"
+                        },
+                        {
+                          "key": "deportePrincipal",
+                          "value": "CARDIO"
+                        }
                       ]
                     },
-                    "description": "Los 4 filtros activos a la vez. Puede devolver content vacío según el seed."
+                    "description": "Los 4 filtros activos a la vez. Puede devolver content vacÃ­o segÃºn el seed."
                   },
                   "response": []
                 },
@@ -529,16 +683,61 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{baseUrl}}/api/analisis/vigente?sort=probabilidadAbandono,asc",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["api", "analisis", "vigente"],
-                      "query": [{ "key": "sort", "value": "probabilidadAbandono,asc" }]
+                      "raw": "{{baseUrl}}/api/v1/analisis?sort=probabilidadAbandono,asc",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "analisis"
+                      ],
+                      "query": [
+                        {
+                          "key": "sort",
+                          "value": "probabilidadAbandono,asc"
+                        }
+                      ]
                     },
-                    "description": "Ordenación ascendente — el primero es el de menor riesgo."
+                    "description": "OrdenaciÃ³n ascendente â€” el primero es el de menor riesgo."
                   },
                   "response": []
                 }
               ]
+            },
+            {
+              "name": "GET-AnalisisVigente",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "const json = pm.response.json();",
+                      "pm.test('totalClientes es nÃºmero', () => pm.expect(json.totalClientes).to.be.a('number'));",
+                      "pm.test('resultados tiene content', () => pm.expect(json.resultados.content).to.be.an('array'));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/analisis",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "analisis"
+                  ]
+                },
+                "description": "Sin filtros. Devuelve primera pÃ¡gina (10 elementos) ordenada por probabilidadAbandono desc."
+              },
+              "response": []
             }
           ]
         },
@@ -564,11 +763,18 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/analisis/cliente/{{clienteId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "analisis", "cliente", "{{clienteId}}"]
+                  "raw": "{{baseUrl}}/api/v1/analisis/{{clienteId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "analisis",
+                    "{{clienteId}}"
+                  ]
                 },
-                "description": "Detalle de un cliente concreto. clienteId se rellena automáticamente tras POST-LanzarAnalisis."
+                "description": "Detalle de un cliente concreto. clienteId se rellena automÃ¡ticamente tras POST-LanzarAnalisis."
               },
               "response": []
             },
@@ -589,11 +795,18 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/analisis/cliente/999999",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "analisis", "cliente", "999999"]
+                  "raw": "{{baseUrl}}/api/v1/analisis/999999",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "analisis",
+                    "999999"
+                  ]
                 },
-                "description": "ID inexistente — debe devolver 404."
+                "description": "ID inexistente â€” debe devolver 404."
               },
               "response": []
             },
@@ -611,15 +824,24 @@
                 }
               ],
               "request": {
-                "auth": { "type": "noauth" },
+                "auth": {
+                  "type": "noauth"
+                },
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/analisis/cliente/{{clienteId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "analisis", "cliente", "{{clienteId}}"]
+                  "raw": "{{baseUrl}}/api/v1/analisis/{{clienteId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "analisis",
+                    "{{clienteId}}"
+                  ]
                 },
-                "description": "Sin token JWT — debe devolver 401."
+                "description": "Sin token JWT â€” debe devolver 401."
               },
               "response": []
             }
@@ -627,5 +849,15 @@
         }
       ]
     }
-  ]
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwtToken}}",
+        "type": "string"
+      }
+    ]
+  }
 }

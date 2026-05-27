@@ -33,17 +33,17 @@ function getLoginEndpoint() {
 }
 
 function getAnalisisEndpoint() {
-  return MOCK_MODE ? `${MOCK_BASE}mock-analisis.json` : `${API_BASE}/analisis/vigente`;
+  return MOCK_MODE ? `${MOCK_BASE}mock-analisis.json` : `${API_BASE}/v1/analisis`;
 }
 
 function getAnalisisLanzarEndpoint() {
-  return MOCK_MODE ? `${MOCK_BASE}analisis.lanzar.json` : `${API_BASE}/analisis/lanzar`;
+  return MOCK_MODE ? `${MOCK_BASE}analisis.lanzar.json` : `${API_BASE}/v1/analisis/ejecutar`;
 }
 
 function getAnalisisClienteEndpoint(clientId) {
   return MOCK_MODE
     ? `${MOCK_BASE}mock-cliente.json`
-    : `${API_BASE}/analisis/cliente/${clientId}`;
+    : `${API_BASE}/v1/analisis/${clientId}`;
 }
 
 function getPerfilEndpoint() {
