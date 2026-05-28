@@ -4,7 +4,7 @@ import { clearSession, getSession, redirectToLogin, requireAuth } from '../auth.
 import { prepareCampaignForClients } from '../services/campaign-service.js';
 import { exportClientsToExcel } from '../services/export-service.js';
 import { getDashboardElements } from '../dashboard/elements.js';
-import { countByRisk, extractPagination, extractRows, getFilteredRows, getSelectedRows } from '../dashboard/data.js';
+import { countByRisk, extractPagination, extractRows, getSelectedRows } from '../dashboard/data.js';
 import { renderEmpty, renderPagination, renderRiskChart, renderRows, syncSelectionUi } from '../dashboard/render.js';
 
 // Estado principal del dashboard: análisis cargado, filas disponibles, selección y paginación.
@@ -15,6 +15,7 @@ const state = {
   page: 0,
   totalPages: 1,
   totalElements: 0,
+  initialLoaded: false,
 };
 
 // Referencias a los elementos del DOM utilizados por la vista.
@@ -30,6 +31,7 @@ function initDashboard() {
   const session = getSession();
   elements.userLabel.textContent = session?.username || 'Usuario';
 
+  elements.perfil.addEventListener('click', () => { window.location.href = APP_ROUTES.perfil; });
   elements.logout.addEventListener('click', handleLogout);
 
   // Filtros de backend: cada cambio lanza una nueva petición desde la página 0.
@@ -38,8 +40,8 @@ function initDashboard() {
   elements.franjaFilter.addEventListener('change', () => loadDashboard());
   elements.deporteFilter.addEventListener('change', () => loadDashboard());
 
-  // Búsqueda de texto: filtrado en memoria sobre los resultados de la página actual.
-  elements.search.addEventListener('input', refreshTable);
+  // Búsqueda de texto: filtrado en backend, con debounce para no lanzar una petición por tecla.
+  elements.search.addEventListener('input', debounce(() => loadDashboard(), 350));
 
   elements.tableBody.addEventListener('click', handleTableClick);
   elements.tableBody.addEventListener('change', handleTableSelection);
@@ -79,6 +81,14 @@ async function loadDashboard({ relaunch = false, page = 0 } = {}) {
     const pagination = extractPagination(analisis.resultados);
     state.totalPages    = pagination.totalPages;
     state.totalElements = pagination.totalElements;
+
+    // Si es la primera carga y no hay resultados, lanza el análisis automáticamente.
+    if (!relaunch && !state.initialLoaded && state.totalElements === 0) {
+      state.initialLoaded = true;
+      await loadDashboard({ relaunch: true });
+      return;
+    }
+    state.initialLoaded = true;
 
     // Mantiene seleccionados únicamente los clientes que siguen en la página actual.
     state.selectedIds = new Set(
@@ -203,16 +213,25 @@ function handleExportSelected() {
 // Devuelve los valores activos de los filtros de backend.
 function getActiveFilters() {
   return {
-    nivelRiesgo:     elements.riskFilter.value   || undefined,
-    grupo:           elements.grupoFilter.value  || undefined,
-    franjaHoraria:   elements.franjaFilter.value || undefined,
+    nivelRiesgo:      elements.riskFilter.value    || undefined,
+    grupo:            elements.grupoFilter.value   || undefined,
+    franjaHoraria:    elements.franjaFilter.value  || undefined,
     deportePrincipal: elements.deporteFilter.value || undefined,
+    nombre:           elements.search.value.trim() || undefined,
   };
 }
 
-// Devuelve las filas visibles aplicando solo la búsqueda de texto (filtros de backend ya aplicados).
+// El backend ya aplica el filtro de nombre; devuelve las filas de la página tal cual.
 function getVisibleRows() {
-  return getFilteredRows(state.rows, { query: elements.search.value });
+  return state.rows;
+}
+
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
 }
 
 // Obtiene los clientes seleccionados a partir del estado global de selección.

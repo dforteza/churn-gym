@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface AnalisisService
 {
-    AnalisisResumenResponseDto getAnalisisVigente(NivelRiesgo nivelRiesgo, GrupoRiesgo grupo, FranjaHoraria franja, DeportePrincipal deporte, Pageable pageable);
+    AnalisisResumenResponseDto getAnalisisVigente(NivelRiesgo nivelRiesgo, GrupoRiesgo grupo, FranjaHoraria franja, DeportePrincipal deporte, String nombre, Pageable pageable);
     AnalisisResumenResponseDto lanzarAnalisis();
     ClienteAnalisisResponseDto getDetalleCliente(Long clienteId);
 }
