@@ -3,7 +3,7 @@
     "timestamp": "2026-04-21T09:00:00",
     "status": 401,
     "error": "Unauthorized",
-    "message": "Credenciales incorrectas"
+    "message": "Usuario o contraseña incorrectos"
   },
   "403": {
     "timestamp": "2026-04-21T09:00:00",
