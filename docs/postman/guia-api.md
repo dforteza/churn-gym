@@ -90,14 +90,6 @@ Validación del teléfono: formato `+34XXXXXXXXX` obligatorio (sin espacios, pri
 
 ---
 
-## Monitorización
-
-| Request | Método | Endpoint | Respuesta |
-|---|---|---|---|
-| GET-Health | GET | `/actuator/health` | 200 — `{"status":"UP"}` (no requiere token) |
-
----
-
 ## Orden de ejecución recomendado
 
 1. `POST-Login` — obtiene y guarda el token
