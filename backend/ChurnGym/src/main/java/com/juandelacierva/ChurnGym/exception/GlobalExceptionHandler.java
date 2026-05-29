@@ -40,7 +40,7 @@ public class GlobalExceptionHandler
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadCredentials(BadCredentialsException ex)
     {
-        log.warn("Intento de login con credenciales incorrectas");
+        log.warn("Login fallido — credenciales incorrectas");
 
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.UNAUTHORIZED.value());

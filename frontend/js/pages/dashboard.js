@@ -191,7 +191,9 @@ function handleSendCampaign() {
     const selectedRows = getCurrentSelectedRows();
     const campaign = prepareCampaignForClients(selectedRows);
 
-    window.location.href = campaign.mailto;
+    const a = document.createElement('a');
+    a.href = campaign.mailto;
+    a.click();
     setFeedback(`Campaña preparada para ${campaign.count} clientes en tu aplicación de correo.`);
   } catch (error) {
     setFeedback(error.message);
