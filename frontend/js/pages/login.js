@@ -37,7 +37,7 @@ async function loginWithApi({ username, password }) {
   if (MOCK_MODE) {
     // Valida las credenciales de prueba antes de devolver la respuesta simulada.
     if (username !== MOCK_CREDENTIALS.username || password !== MOCK_CREDENTIALS.password) {
-      throw new Error('Usuario o contraseña incorrectos.');
+      throw new Error('Usuario o contraseña incorrectos');
     }
 
     return MOCK_LOGIN_RESPONSE;

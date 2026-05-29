@@ -50,13 +50,6 @@ function getPerfilEndpoint() {
   return `${API_BASE}/v1/perfil`;
 }
 
-async function apiLogin(username, password) {
-  return apiFetch(getLoginEndpoint(), {
-    method: 'POST',
-    body: JSON.stringify({ username, password }),
-  });
-}
-
 // Realiza peticiones HTTP al backend aplicando configuración común:
 // autenticación mediante JWT, cabeceras adecuadas y tratamiento de errores.
 async function apiFetch(url, options = {}) {
@@ -89,7 +82,7 @@ async function apiFetch(url, options = {}) {
   if (response.status === 401) {
     if (isLoginRequest) {
       const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || 'Usuario o contraseña incorrectos.');
+      throw new Error(error.message || 'Usuario o contraseña incorrectos');
     }
 
     localStorage.removeItem('jwt_token');
@@ -122,7 +115,6 @@ export {
   APP_ROUTES,
   MOCK_MODE,
   apiFetch,
-  apiLogin,
   getAnalisisClienteEndpoint,
   getAnalisisEndpoint,
   getAnalisisLanzarEndpoint,
