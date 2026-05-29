@@ -3,14 +3,14 @@ import { APP_ROUTES } from './config.js';
 const SESSION_KEY = 'auth_user';
 const TOKEN_KEY = 'jwt_token';
 
-// Guarda por separado el token y los datos visibles del usuario para
-// reutilizarlos en otras pantallas sin tener que volver a loguearse.
+// Guarda el token y los datos visibles del usuario para reutilizarlos
+// en otras pantallas sin solicitar de nuevo el inicio de sesión.
 function saveSession({ token, username, rol }) {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(SESSION_KEY, JSON.stringify({ username, rol }));
 }
 
-// Si la sesion esta corrupta, la limpiamos para no dejar la app en un estado inconsistente.
+// Recupera la sesión almacenada y la elimina si no tiene un formato válido.
 function getSession() {
   const rawSession = localStorage.getItem(SESSION_KEY);
 
@@ -26,24 +26,28 @@ function getSession() {
   }
 }
 
+// Elimina los datos locales asociados a la sesión del usuario.
 function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(SESSION_KEY);
 }
 
+// Comprueba si existe un token de autenticación almacenado.
 function isAuthenticated() {
   return Boolean(localStorage.getItem(TOKEN_KEY));
 }
 
-// Centralizamos las redirecciones para no repetir rutas "hardcodeadas".
+// Redirige al usuario al dashboard principal.
 function redirectToDashboard() {
   window.location.href = APP_ROUTES.dashboard;
 }
 
+// Redirige al usuario a la pantalla de inicio de sesión.
 function redirectToLogin() {
   window.location.href = APP_ROUTES.login;
 }
 
+// Evita que un usuario autenticado vuelva a acceder al formulario de inicio de sesión.
 function redirectIfAuthenticated() {
   if (isAuthenticated()) {
     redirectToDashboard();
@@ -53,7 +57,7 @@ function redirectIfAuthenticated() {
   return false;
 }
 
-// Este guard se usa en paginas privadas para cortar el acceso si no hay token.
+// Protege las páginas privadas redirigiendo al login si no existe una sesión válida.
 function requireAuth() {
   if (!isAuthenticated()) {
     redirectToLogin();
