@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Churn Gym Detector | Dashboard</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Churn Gym Detector</h1>
+    </div>
+    <div class="session">
+      <span data-user-label>Usuario</span>
+      <button class="ghost-button" type="button" data-perfil>Mi perfil</button>
+      <button class="ghost-button" type="button" data-logout>Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="toolbar" aria-label="Controles del dashboard">
+      <div class="control">
+        <label for="riskFilter">Riesgo</label>
+        <select id="riskFilter" data-risk-filter>
+          <option value="">Todos</option>
+          <option value="ALTO">Alto</option>
+          <option value="MEDIO">Medio</option>
+          <option value="BAJO">Bajo</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label for="grupoFilter">Grupo</label>
+        <select id="grupoFilter" data-grupo-filter>
+          <option value="">Todos</option>
+          <option value="CONSOLIDADO_EN_RIESGO">Consolidado en riesgo</option>
+          <option value="VETERANO_EN_PAUSA">Veterano en pausa</option>
+          <option value="VETERANO_ESPORADICO">Veterano esporádico</option>
+          <option value="NUEVO_SIN_ENGANCHE">Nuevo sin enganche</option>
+          <option value="NUEVO_ENGANCHADO">Nuevo enganchado</option>
+          <option value="ACTIVO_ESTABLE">Activo estable</option>
+          <option value="IRREGULAR">Irregular</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label for="franjaFilter">Franja horaria</label>
+        <select id="franjaFilter" data-franja-filter>
+          <option value="">Todas</option>
+          <option value="MANANA">Mañana</option>
+          <option value="TARDE">Tarde</option>
+          <option value="NOCHE">Noche</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label for="deporteFilter">Deporte</label>
+        <select id="deporteFilter" data-deporte-filter>
+          <option value="">Todos</option>
+          <option value="MUSCULACION">Musculación</option>
+          <option value="CARDIO">Cardio</option>
+          <option value="CROSSFIT">CrossFit</option>
+          <option value="CLASES_COLECTIVAS">Clases colectivas</option>
+          <option value="MIXTO">Mixto</option>
+        </select>
+      </div>
+
+      <div class="control search-control">
+        <label for="searchInput">Buscar cliente</label>
+        <input id="searchInput" type="search" placeholder="Buscar por nombre..." data-search>
+      </div>
+
+      <button class="primary-button" type="button" data-refresh>Actualizar análisis</button>
+    </section>
+
+    <section class="selection-panel" aria-label="Acciones de fidelización">
+      <div>
+        <p class="eyebrow">Campaña de fidelización</p>
+        <h2>Clientes seleccionados</h2>
+        <p data-selection-summary>Selecciona uno o varios clientes para enviar la campaña o exportarlos a Excel.</p>
+      </div>
+
+      <div class="selection-actions">
+        <span class="selection-count" data-selection-count>0 seleccionados</span>
+        <button class="primary-button" type="button" data-send-campaign disabled>Enviar campaña</button>
+        <button class="ghost-button" type="button" data-export-selected disabled>Exportar a Excel</button>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <article class="table-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Clientes analizados</h2>
+            <p data-calculated>Calculado en --</p>
+          </div>
+          <span data-result-count>0 resultados</span>
+        </div>
+
+        <div class="table-wrap">
+          <table data-table>
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" aria-label="Seleccionar clientes visibles" data-select-all>
+                </th>
+                <th>Cliente</th>
+                <th>Riesgo</th>
+                <th>Probabilidad</th>
+                <th>Frecuencia</th>
+                <th>Inactividad</th>
+                <th>Detalle</th>
+              </tr>
+            </thead>
+            <tbody data-table-body>
+              <tr>
+                <td colspan="7">Cargando datos…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <button class="ghost-button" type="button" data-prev-page disabled>← Anterior</button>
+          <span data-page-info>Página 1 de 1</span>
+          <button class="ghost-button" type="button" data-next-page disabled>Siguiente →</button>
+        </div>
+      </article>
+
+      <aside class="insight-panel" aria-label="Resumen visual del riesgo">
+        <div class="panel-heading panel-heading-stack">
+          <div>
+            <p class="eyebrow">Resumen visual</p>
+            <h2>Riesgo global</h2>
+            <p data-chart-caption>Distribución actual por intervalos de riesgo.</p>
+          </div>
+        </div>
+
+        <div class="chart-shell">
+          <div class="risk-chart" data-risk-chart role="img" aria-label="Gráfica circular del riesgo global">
+            <div class="risk-chart-inner">
+              <strong data-chart-total>0</strong>
+              <span>clientes</span>
+            </div>
+          </div>
+        </div>
+
+        <dl class="chart-legend">
+          <div>
+            <dt><span class="legend-dot legend-dot-high"></span>Riesgo alto</dt>
+            <dd data-chart-high>0 clientes</dd>
+          </div>
+          <div>
+            <dt><span class="legend-dot legend-dot-medium"></span>Riesgo medio</dt>
+            <dd data-chart-medium>0 clientes</dd>
+          </div>
+          <div>
+            <dt><span class="legend-dot legend-dot-low"></span>Riesgo bajo</dt>
+            <dd data-chart-low>0 clientes</dd>
+          </div>
+        </dl>
+      </aside>
+    </section>
+
+    <p class="feedback" data-dashboard-feedback aria-live="polite"></p>
+  </main>
+
+  <script type="module" src="../js/pages/dashboard.js"></script>
+</body>
+</html>

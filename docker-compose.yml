@@ -1,0 +1,69 @@
+services:
+
+  # === BASE DE DATOS =========================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: churn-gym-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-churngym}
+      POSTGRES_USER: ${POSTGRES_USER:-churnadmin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-churnadmin} -d ${POSTGRES_DB:-churngym}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - churn-network
+
+  # === BACKEND ===============================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: churn-gym-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-churngym}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-churnadmin}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      JWT_SECRET: ${JWT_SECRET:-changeme_secret_key_for_churngym_must_be_64_chars_long_exactly!!}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      CLUSTERING_SERVICE_URL: ${CLUSTERING_SERVICE_URL:-http://localhost:5000}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - churn-network
+
+  # === FRONTEND ==============================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: churn-gym-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - churn-network
+
+# === VOLÚMENES ================================================================
+volumes:
+  postgres_data:
+    driver: local
+
+# === RED ======================================================================
+networks:
+  churn-network:
+    driver: bridge

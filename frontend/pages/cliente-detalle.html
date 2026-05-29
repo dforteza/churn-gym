@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Churn Gym Detector | Detalle del cliente</title>
+  <link rel="stylesheet" href="../css/cliente-detalle.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Detalle del cliente</p>
+      <h1>Churn Gym Detector</h1>
+    </div>
+    <div class="session">
+      <span data-user-label>Usuario</span>
+      <button class="ghost-button" type="button" data-back>Volver al dashboard</button>
+      <button class="ghost-button" type="button" data-logout>Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="detail-page">
+    <section class="hero-card" aria-label="Resumen principal del cliente">
+      <div>
+        <p class="eyebrow">Cliente seleccionado</p>
+        <h2 data-client-name>Cargando cliente…</h2>
+        <p class="hero-email" data-client-email>--</p>
+      </div>
+
+      <div class="hero-risk">
+        <span class="risk-pill" data-client-risk>--</span>
+        <strong data-client-probability>--</strong>
+        <span>Probabilidad de abandono</span>
+        <div class="prob-bar">
+          <div class="prob-fill" data-prob-fill></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="detail-grid">
+      <article class="panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Perfil y segmentación</h2>
+            <p>Resumen de la clasificación del cliente dentro del análisis actual.</p>
+          </div>
+        </div>
+
+        <dl class="detail-list">
+          <div>
+            <dt>Grupo</dt>
+            <dd data-client-group>--</dd>
+          </div>
+          <div>
+            <dt>Deporte principal</dt>
+            <dd data-client-sport>--</dd>
+          </div>
+          <div>
+            <dt>Franja horaria</dt>
+            <dd data-client-time>--</dd>
+          </div>
+          <div>
+            <dt>Meses como socio</dt>
+            <dd data-client-membership>--</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Actividad y tendencia</h2>
+            <p>Datos clave para contrastar el estado del cliente.</p>
+          </div>
+        </div>
+
+        <dl class="detail-list">
+          <div>
+            <dt>Frecuencia semanal</dt>
+            <dd data-client-frequency>--</dd>
+          </div>
+          <div>
+            <dt>Semanas de inactividad</dt>
+            <dd data-client-inactive>--</dd>
+          </div>
+          <div>
+            <dt>Tendencia mensual</dt>
+            <dd data-client-trend>--</dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
+    <p class="feedback" data-detail-feedback aria-live="polite"></p>
+  </main>
+
+  <script type="module" src="../js/pages/cliente-detalle.js"></script>
+</body>
+</html>
