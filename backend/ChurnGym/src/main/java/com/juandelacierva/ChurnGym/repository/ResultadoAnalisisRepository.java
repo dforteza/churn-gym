@@ -12,12 +12,6 @@ public interface ResultadoAnalisisRepository extends JpaRepository<ResultadoAnal
 {
     Optional<ResultadoAnalisis> findByClienteDatosId(Long id);
 
-    // Native query: evita el type-checker de Hibernate 6 (FUNCTION(...) LIKE no compila en JPQL)
-    // y permite usar unaccent() de PostgreSQL directamente. Los enums se pasan ya como String desde el servicio.
-    // Hibernate no aplica sort dinámico en native queries; el ORDER BY está explícito.
-    // :nombreLike llega pre-calculado desde el servicio: "%texto%" cuando hay búsqueda, "%" cuando no.
-    // Así el parámetro aparece una sola vez en la query, evitando el problema de doble binding
-    // de named params en native queries de Hibernate que dejaba la segunda ocurrencia como null.
     @Query(value =
         "SELECT r.* FROM resultados_analisis r " +
         "JOIN clientes_datos cd ON r.cliente_datos_id = cd.id " +

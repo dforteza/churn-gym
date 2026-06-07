@@ -52,13 +52,10 @@ public class AnalisisServiceImpl implements AnalisisService
         String grupoStr       = grupo       != null ? grupo.name()       : null;
         String franjaStr      = franja      != null ? franja.name()      : null;
         String deporteStr     = deporte     != null ? deporte.name()     : null;
-        // nombreLike nunca es null: "%" casa con todo cuando no hay búsqueda,
-        // "%texto%" filtra por nombre/apellidos cuando la hay.
+
         String nombreLike     = (nombre != null && !nombre.isBlank()) ? "%" + nombre.trim() + "%" : "%";
 
-        // La native query ya lleva ORDER BY hardcodeado; si se pasa un Pageable con Sort,
-        // Spring Data JPA añade un segundo ORDER BY con el nombre Java (probabilidadAbandono)
-        // que PostgreSQL no reconoce. Se elimina el sort del Pageable para evitarlo.
+
         Pageable paginaSinSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
         Page<ResultadoAnalisis> pagina = resultadoAnalisisRepository
