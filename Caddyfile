@@ -1,0 +1,7 @@
+# Caddy obtiene y renueva el certificado HTTPS automáticamente (Let's Encrypt)
+# para el dominio indicado en la variable DOMAIN del archivo .env.
+# Todo el tráfico se reenvía al contenedor del frontend (nginx), que a su vez
+# sirve los estáticos y hace de proxy hacia el backend.
+{$DOMAIN} {
+    reverse_proxy frontend:80
+}

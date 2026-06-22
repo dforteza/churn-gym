@@ -14,7 +14,9 @@ function apiGetAnalisis({ nivelRiesgo, grupo, franjaHoraria, deportePrincipal, n
     return apiFetch(getAnalisisEndpoint());
   }
 
-  const url = new URL(getAnalisisEndpoint());
+  // Se pasa el origen como base para que funcione tanto si el endpoint es una
+  // ruta relativa (/api/...) como si fuera una URL absoluta.
+  const url = new URL(getAnalisisEndpoint(), window.location.origin);
 
   if (nivelRiesgo)      url.searchParams.set('nivelRiesgo',      nivelRiesgo);
   if (grupo)            url.searchParams.set('grupo',            grupo);

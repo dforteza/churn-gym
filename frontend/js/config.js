@@ -3,9 +3,11 @@
 // Indica si la aplicación utiliza datos simulados o el backend real.
 const MOCK_MODE = false;
 
-// URL base de la API. Se usa el hostname actual para que funcione correctamente
-// tanto en local como en entornos con Docker o despliegues en red.
-const API_BASE = `${window.location.protocol}//${window.location.hostname}:8080/api`;
+// URL base de la API. Es una ruta relativa al mismo origen: nginx (en local y en
+// producción) se encarga de redirigir todo lo que empieza por /api hacia el
+// backend. Así el navegador siempre habla con el mismo dominio, no hay problemas
+// de CORS y la URL pública queda limpia y con HTTPS.
+const API_BASE = '/api';
 
 // Ruta base de los archivos mock.
 const MOCK_BASE = new URL('../mock/', import.meta.url);

@@ -1,0 +1,95 @@
+# Configuración de PRODUCCIÓN para la VM (Oracle Cloud).
+# Uso:  docker compose -f docker-compose.prod.yml up -d --build
+#
+# Diferencias con el docker-compose.yml de desarrollo:
+#   - Solo Caddy expone puertos (80/443). La BD y el backend NO son accesibles
+#     desde fuera: solo se comunican por la red interna de Docker.
+#   - Los secretos (password de BD, JWT, dominio) son OBLIGATORIOS por .env;
+#     si faltan, el despliegue falla en vez de arrancar con valores inseguros.
+
+services:
+
+  # === BASE DE DATOS =========================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: churn-gym-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-churngym}
+      POSTGRES_USER: ${POSTGRES_USER:-churnadmin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?define POSTGRES_PASSWORD en .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-churnadmin} -d ${POSTGRES_DB:-churngym}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - churn-network
+
+  # === BACKEND ===============================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: churn-gym-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-churngym}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-churnadmin}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?define POSTGRES_PASSWORD en .env}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      JWT_SECRET: ${JWT_SECRET:?define JWT_SECRET en .env (mínimo 64 caracteres)}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      CLUSTERING_SERVICE_URL: ${CLUSTERING_SERVICE_URL:-http://localhost:5000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - churn-network
+
+  # === FRONTEND (nginx: estáticos + proxy a backend) =========================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: churn-gym-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - churn-network
+
+  # === CADDY (reverse proxy + HTTPS automático) ==============================
+  caddy:
+    image: caddy:2-alpine
+    container_name: churn-gym-caddy
+    restart: unless-stopped
+    environment:
+      DOMAIN: "${DOMAIN:?define DOMAIN en .env, por ejemplo 140.x.x.x.nip.io}"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+    networks:
+      - churn-network
+
+# === VOLÚMENES ================================================================
+volumes:
+  postgres_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+
+# === RED ======================================================================
+networks:
+  churn-network:
+    driver: bridge
