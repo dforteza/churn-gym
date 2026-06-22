@@ -96,12 +96,12 @@ class AnalisisServiceImplTest
         Page<ResultadoAnalisis> pagina = new PageImpl<>(List.of(resultado));
 
         when(resultadoAnalisisRepository.findAll()).thenReturn(List.of(resultado));
-        when(resultadoAnalisisRepository.findWithFilters(any(), any(), any(), any(), any())).thenReturn(pagina);
+        when(resultadoAnalisisRepository.findWithFilters(any(), any(), any(), any(), any(), any())).thenReturn(pagina);
         when(analisisMapper.toAnalisisResumenResponse(any(), any(), any())).thenReturn(resumenDto);
 
         // Act
         AnalisisResumenResponseDto response = analisisService.getAnalisisVigente(
-                null, null, null, null, PageRequest.of(0, 10));
+                null, null, null, null, null, PageRequest.of(0, 10));
 
         // Assert
         assertNotNull(response);
@@ -115,12 +115,12 @@ class AnalisisServiceImplTest
     {
         // Arrange
         when(resultadoAnalisisRepository.findAll()).thenReturn(List.of());
-        when(resultadoAnalisisRepository.findWithFilters(any(), any(), any(), any(), any())).thenReturn(Page.empty());
+        when(resultadoAnalisisRepository.findWithFilters(any(), any(), any(), any(), any(), any())).thenReturn(Page.empty());
         when(analisisMapper.toAnalisisResumenResponse(any(), any(), any())).thenReturn(resumenDto);
 
         // Act & Assert
         assertDoesNotThrow(() -> analisisService.getAnalisisVigente(
-                null, null, null, null, PageRequest.of(0, 10)));
+                null, null, null, null, null, PageRequest.of(0, 10)));
     }
 
     // ==========================================================================
@@ -182,7 +182,7 @@ class AnalisisServiceImplTest
         when(motorRiesgoService.calcularProbabilidad(any())).thenReturn(0.45);
         when(motorRiesgoService.asignarGrupo(any())).thenReturn(GrupoRiesgo.IRREGULAR);
         when(resultadoAnalisisRepository.saveAll(any())).thenReturn(List.of());
-        when(resultadoAnalisisRepository.findWithFilters(any(), any(), any(), any(), any())).thenReturn(Page.empty());
+        when(resultadoAnalisisRepository.findWithFilters(any(), any(), any(), any(), any(), any())).thenReturn(Page.empty());
         when(analisisMapper.toAnalisisResumenResponse(any(), any(), any())).thenReturn(resumenDto);
 
         // Act
@@ -206,7 +206,7 @@ class AnalisisServiceImplTest
         when(motorRiesgoService.calcularProbabilidad(any())).thenReturn(0.2);
         when(motorRiesgoService.asignarGrupo(any())).thenReturn(GrupoRiesgo.ACTIVO_ESTABLE);
         when(resultadoAnalisisRepository.saveAll(any())).thenReturn(List.of());
-        when(resultadoAnalisisRepository.findWithFilters(any(), any(), any(), any(), any())).thenReturn(Page.empty());
+        when(resultadoAnalisisRepository.findWithFilters(any(), any(), any(), any(), any(), any())).thenReturn(Page.empty());
         when(analisisMapper.toAnalisisResumenResponse(any(), any(), any())).thenReturn(resumenDto);
 
         // Act

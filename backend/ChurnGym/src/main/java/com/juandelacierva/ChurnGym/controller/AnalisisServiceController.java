@@ -25,7 +25,7 @@ import com.juandelacierva.ChurnGym.service.interfaces.AnalisisService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/analisis")
+@RequestMapping("/api/v1/analisis")
 @RequiredArgsConstructor
 public class AnalisisServiceController
 {
@@ -35,30 +35,31 @@ public class AnalisisServiceController
 
     private final AnalisisService analisisService;
 
-    @GetMapping("/vigente")
+    @GetMapping("")
     public ResponseEntity<AnalisisResumenResponseDto> getAnalisisVigente(
             @RequestParam(required = false) NivelRiesgo      nivelRiesgo,
             @RequestParam(required = false) GrupoRiesgo      grupo,
             @RequestParam(required = false) FranjaHoraria    franjaHoraria,
             @RequestParam(required = false) DeportePrincipal deportePrincipal,
+            @RequestParam(required = false) String           nombre,
             @ParameterObject @PageableDefault(size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT, direction = Sort.Direction.DESC) Pageable pageable)
     {
         if (pageable.getPageSize() > MAX_PAGE_SIZE)
             pageable = PageRequest.of(pageable.getPageNumber(), MAX_PAGE_SIZE, pageable.getSort());
 
         return (new ResponseEntity<>(
-                analisisService.getAnalisisVigente(nivelRiesgo, grupo, franjaHoraria, deportePrincipal, pageable),
+                analisisService.getAnalisisVigente(nivelRiesgo, grupo, franjaHoraria, deportePrincipal, nombre, pageable),
                 HttpStatus.OK)
             );
     }
 
-    @PostMapping("/lanzar")
+    @PostMapping("/ejecutar")
     public ResponseEntity<AnalisisResumenResponseDto> lanzarAnalisis()
     {
         return (new ResponseEntity<>(analisisService.lanzarAnalisis(), HttpStatus.OK));
     }
 
-    @GetMapping("/cliente/{clienteId}")
+    @GetMapping("/{clienteId}")
     public ResponseEntity<ClienteAnalisisResponseDto> getDetalleCliente(@PathVariable Long clienteId)
     {
         return (new ResponseEntity<>(analisisService.getDetalleCliente(clienteId), HttpStatus.OK));

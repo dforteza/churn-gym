@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,16 +44,29 @@ public class AnalisisServiceImpl implements AnalisisService
     public AnalisisResumenResponseDto getAnalisisVigente(
             NivelRiesgo nivelRiesgo, GrupoRiesgo grupo,
             FranjaHoraria franja, DeportePrincipal deporte,
-            Pageable pageable)
+            String nombre, Pageable pageable)
     {
         List<ResultadoAnalisis> todos = resultadoAnalisisRepository.findAll();
 
+        String nivelRiesgoStr = nivelRiesgo != null ? nivelRiesgo.name() : null;
+        String grupoStr       = grupo       != null ? grupo.name()       : null;
+        String franjaStr      = franja      != null ? franja.name()      : null;
+        String deporteStr     = deporte     != null ? deporte.name()     : null;
+
+        String nombreLike     = (nombre != null && !nombre.isBlank()) ? "%" + nombre.trim() + "%" : "%";
+
+
+        Pageable paginaSinSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
         Page<ResultadoAnalisis> pagina = resultadoAnalisisRepository
-                .findWithFilters(nivelRiesgo, grupo, franja, deporte, pageable);
+                .findWithFilters(nivelRiesgoStr, grupoStr, franjaStr, deporteStr, nombreLike, paginaSinSort);
 
         LocalDateTime calculadoEn = todos.isEmpty()
                 ? LocalDateTime.now()
                 : todos.get(0).getCalculadoEn();
+
+        log.info("Dashboard consultado — {} resultados | filtros: riesgo={} grupo={} franja={} deporte={} nombreLike={}",
+                todos.size(), nivelRiesgoStr, grupoStr, franjaStr, deporteStr, nombreLike);
 
         return (analisisMapper.toAnalisisResumenResponse(todos, pagina, calculadoEn));
     }
@@ -70,6 +82,11 @@ public class AnalisisServiceImpl implements AnalisisService
 
         ClienteAnalisisResponseDto response = analisisMapper.toClienteAnalisisResponse(resultado,
                 resultado.getClienteDatos().getClientePrivado());
+
+        log.info("Detalle solicitado — cliente #{}: {} {}",
+                clienteId,
+                resultado.getClienteDatos().getClientePrivado().getNombre(),
+                resultado.getClienteDatos().getClientePrivado().getApellidos());
 
         return (response);
     }
@@ -110,9 +127,9 @@ public class AnalisisServiceImpl implements AnalisisService
         long bajo  = resultados.stream().filter(r -> r.getNivelRiesgo() == NivelRiesgo.BAJO).count();
         log.info("Analisis completado - {} clientes: {} ALTO / {} MEDIO / {} BAJO", resultados.size(), alto, medio, bajo);
 
-        Pageable paginaPorDefecto = PageRequest.of(0, 10, Sort.by("probabilidadAbandono").descending());
+        Pageable paginaPorDefecto = PageRequest.of(0, 10);
         Page<ResultadoAnalisis> pagina = resultadoAnalisisRepository
-                .findWithFilters(null, null, null, null, paginaPorDefecto);
+                .findWithFilters(null, null, null, null, null, paginaPorDefecto);
 
         return (analisisMapper.toAnalisisResumenResponse(resultados, pagina, ahora));
     }

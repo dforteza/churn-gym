@@ -14,7 +14,7 @@ Autenticación: Bearer JWT (obtener con POST-Login y usar en el resto)
 
 Body del login:
 ```json
-{ "username": "admin", "password": "admin1234" }
+{ "username": "diego", "password": "admin1234" }
 ```
 
 ---
@@ -51,7 +51,7 @@ Endpoint base: `GET /api/analisis/vigente`
 
 Valores válidos por filtro:
 - `nivelRiesgo`: ALTO · MEDIO · BAJO
-- `grupo`: CONSOLIDADO_EN_RIESGO · NUEVO_SIN_ENGANCHE · ACTIVO_ESTABLE · IRREGULAR
+- `grupo`: CONSOLIDADO_EN_RIESGO · VETERANO_EN_PAUSA · VETERANO_ESPORADICO · NUEVO_SIN_ENGANCHE · NUEVO_ENGANCHADO · ACTIVO_ESTABLE · IRREGULAR
 - `franjaHoraria`: MANANA · TARDE · NOCHE
 - `deportePrincipal`: MUSCULACION · CARDIO · CROSSFIT · CLASES_COLECTIVAS · MIXTO
 
@@ -64,6 +64,29 @@ Valores válidos por filtro:
 | GET-DetalleCliente | GET | `/api/analisis/cliente/{{clienteId}}` | 200 |
 | GET-DetalleCliente-NoExiste | GET | `/api/analisis/cliente/999999` | 404 |
 | GET-DetalleCliente-SinToken | GET | `/api/analisis/cliente/{{clienteId}}` | 401 |
+
+---
+
+## Perfil del gimnasio
+
+| Request | Método | Endpoint | Respuesta |
+|---|---|---|---|
+| GET-Perfil | GET | `/api/v1/perfil` | 200 — datos del gimnasio y cuenta |
+| PUT-Perfil | PUT | `/api/v1/perfil` | 200 — perfil actualizado |
+| PUT-Perfil-TelefonoInvalido | PUT | `/api/v1/perfil` | 400 — error de validación |
+| GET-Perfil-SinToken | GET | `/api/v1/perfil` | 401 |
+
+Body del PUT (todos los campos opcionales — solo se actualizan los que vienen rellenos):
+```json
+{
+  "nombreGimnasio": "Churn Gym Madrid Centro",
+  "direccion1": "Calle Gran Vía, 45",
+  "direccion2": "Madrid, 28013",
+  "telefono": "+34910123456"
+}
+```
+
+Validación del teléfono: formato `+34XXXXXXXXX` obligatorio (sin espacios, primer dígito 6-9).
 
 ---
 
