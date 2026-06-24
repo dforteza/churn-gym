@@ -27,7 +27,7 @@
 - **Dashboard interactivo** con filtros por nivel de riesgo y búsqueda por nombre
 - **Autenticación JWT** (HS512) con Spring Security
 - **API REST documentada** en Swagger UI y colección Postman incluida
-- **Dockerizado al 100 %** — un solo comando para levantar toda la aplicación
+- **Dockerizado al 100 %** - un solo comando para levantar toda la aplicación
 
 ## Arquitectura
 
@@ -60,7 +60,7 @@ docker compose up --build
 | Backend API | http://localhost:8080/api |
 | Swagger UI | http://localhost:8080/swagger-ui/index.html |
 
-**Credenciales de prueba:** usuario `diego` / contraseña `admin1234`.
+**Credenciales de prueba:** usuario `paco` / contraseña `admin1234`.
 
 **Endpoints principales:**
 
@@ -84,8 +84,8 @@ docker compose up --build
 
 ## Licencia
 
-MIT — ver [LICENSE](LICENSE).
+MIT - ver [LICENSE](LICENSE).
 
 ## Estado del proyecto
 
-TFG DAM 2025/2026 — versión final.
+TFG DAM 2025/2026 - versión final.
