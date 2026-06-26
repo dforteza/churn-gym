@@ -1,9 +1,7 @@
 package com.juandelacierva.ChurnGym.security.config;
 
-import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,12 +31,6 @@ public class SecurityConfig {
     private final JwtAuthEntryPoint         jwtAuthEntryPoint;
     private final JwtAuthenticationFilter   jwtAuthenticationFilter;
 
-    // Orígenes permitidos para CORS. En local valen los de por defecto; en
-    // producción (mismo origen tras el proxy) no hace falta tocarlo, pero se
-    // puede sobreescribir con la variable de entorno CORS_ALLOWED_ORIGINS.
-    @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:80,http://localhost,http://localhost:5500,http://127.0.0.1:5500}")
-    private String allowedOrigins;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -66,12 +58,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(
-            Arrays.stream(allowedOrigins.split(","))
-                  .map(String::trim)
-                  .filter(origin -> !origin.isEmpty())
-                  .toList()
-        );
+        config.setAllowedOrigins(List.of(
+            "http://localhost:3000",   // frontend en Docker
+            "http://localhost:80",     // nginx puerto estándar
+            "http://localhost",        // nginx sin puerto
+            "http://localhost:5500",   // Live Server VS Code
+            "http://127.0.0.1:5500"   // Live Server VS Code (alternativa)
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
